@@ -27,7 +27,7 @@ export default function Home() {
   }>({
     messages: [
       {
-        message: 'Hi, how would you like to improve this repo?',
+        message: 'Hi, what MBT related questions do you have?',
         type: 'apiMessage',
       },
     ],
@@ -165,7 +165,7 @@ export default function Home() {
       <Layout>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With Github Repo
+            Chat With MBT <span className="text-accent">AI</span>
           </h1>
           <main className={styles.main}>
             <div className={styles.cloud}>
@@ -282,7 +282,7 @@ export default function Home() {
                     placeholder={
                       loading
                         ? 'Waiting for response...'
-                        : 'How would you like to improve your code?'
+                        : 'What\'s on your mind?'
                     }
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
