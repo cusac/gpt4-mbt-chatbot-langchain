@@ -13,6 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { SourceScore } from './api/evaluate_source';
 
 export default function Home() {
   const [query, setQuery] = useState<string>('');
@@ -48,24 +49,24 @@ export default function Home() {
 
   // Function that takes in text and creates a hash Id number
   const createHashId = (text: string) => {
-    return text
-      .split('')
-      .reduce((a, b) => {
-        a = (a << 5) - a + b.charCodeAt(0);
-        return a & a;
-      }, 0)
+    return text.split('').reduce((a, b) => {
+      a = (a << 5) - a + b.charCodeAt(0);
+      return a & a;
+    }, 0);
   };
 
   const fetchEval = async (userMessage: Message, apiMessage: Message) => {
-    // console.log("MESSAGE:", message)
+    console.log('fetchEval PRE');
     if (
       userMessage.type === 'userMessage' &&
       !apiMessage.sourcesEvaluated &&
       !apiMessage.sourcesEvaluationPending &&
       apiMessage.sourceDocs?.length
     ) {
-      console.log("fetchEval")
+      console.log('fetchEval');
       const source_docs = apiMessage.sourceDocs || [];
+
+      console.log('SOURCE DOCS:', source_docs.length);
 
       setMessageState((state) => ({
         ...state,
@@ -84,8 +85,7 @@ export default function Home() {
       }));
 
       try {
-        const ctrl = new AbortController();
-        fetchEventSource('/api/evaluate_source', {
+        const response = await fetch('/api/evaluate_source', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -95,69 +95,302 @@ export default function Home() {
             userMessage: userMessage.message,
             apiMessage: apiMessage.message,
           }),
-          signal: ctrl.signal,
-          onmessage: (event: any) => {
-            let { source_scores } = JSON.parse(event.data);
-            // console.log('SOURCE SCORES BEFORE: ', source_scores);
-            // source_scores = JSON.parse(source_scores)
-            if (source_scores?.length > 0) {
-              source_scores = source_scores.map((s: string) => JSON.parse(s));
-              source_scores = source_scores.map((s: any, i: number) => {
-                s.id = createHashId(source_docs[i].pageContent);
-                return s;
-              });
-            } else {
-              return;
-            }
-            console.log('SOURCE SCORES AFTER:', source_scores);
-
-            console.log("STATE MESSAGES:", messageState)
-
-            setMessageState((state) => ({
-              ...state,
-              messages: [
-                ...state.messages.map((m) => {
-                  // console.log("M:", m)
-                  if (
-                    m.message === userMessage.message ||
-                    m.message === apiMessage.message
-                  ) {
-                    if (
-                      m.sourceDocs &&
-                      source_scores?.length
-                    ) {
-                      // Filter out source docs that have a relevance score less than 5
-                      m.sourceDocs = m.sourceDocs.filter((d, i) => {
-                        let score = source_scores.filter((s: any) => s.id === createHashId(d.pageContent));
-                        if (score.length > 0) {
-                          score = score[0].score;
-                        } else {
-                          score = 0;
-                        }
-                        // console.log('SCORE: ', score, score >= 5);
-                        // console.log("ExPL:", source_scores[i].explanation)
-                        return score >= 5;
-                      });
-                      m.sourcesEvaluated = true;
-                      m.sourcesEvaluationPending = false;
-                      // console.log('M EVALUATED:', m);
-                    }
-                  }
-                  return m;
-                }),
-              ],
-              pending: undefined,
-            }));
-          },
         });
+
+        console.log('RESPONSE:', response);
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log(data);
+
+        // let { source_scores } = JSON.parse(response.data);
+        let { source_scores } = data;
+        // console.log('SOURCE SCORES BEFORE: ', source_scores);
+        // // source_scores = JSON.parse(source_scores)
+        // if (source_scores?.length > 0) {
+        //   source_scores = source_scores.map((s: string) => JSON.parse(s));
+        //   source_scores = source_scores.map((s: any, i: number) => {
+        //     s.id = createHashId(source_docs[i].pageContent);
+        //     console.log('ID CREATED: ', s.id);
+        //     return s;
+        //   });
+        // } else {
+        //   return;
+        // }
+        console.log('SOURCE SCORES AFTER:', source_scores);
+
+        console.log('STATE MESSAGES:', messageState);
+
+        setMessageState((state) => ({
+          ...state,
+          messages: [
+            ...state.messages.map((m) => {
+              // console.log("M:", m)
+              if (
+                m.message === userMessage.message ||
+                m.message === apiMessage.message
+              ) {
+                if (m.sourceDocs && source_scores?.length) {
+                  // Filter out source docs that have a relevance score less than 5
+                  m.sourceDocs = source_scores
+                    .filter((s: SourceScore) => s.score >= 5)
+                    .map((s: SourceScore) => {
+                      return s.sourceDoc;
+                    });
+                  m.sourcesEvaluated = true;
+                  m.sourcesEvaluationPending = false;
+                  // console.log('M EVALUATED:', m);
+                }
+              }
+              return m;
+            }),
+          ],
+          pending: undefined,
+        }));
       } catch (error) {
-        setError(
-          'An error occurred while fetching the data. Please try again.',
-        );
-        console.log('error', error);
+        console.error('There was a problem with the fetch operation:', error);
       }
     }
   };
+
+  // console.log("fetchEval PRE")
+  // if (
+  //   userMessage.type === 'userMessage' &&
+  //   !apiMessage.sourcesEvaluated &&
+  //   !apiMessage.sourcesEvaluationPending &&
+  //   apiMessage.sourceDocs?.length
+  // ) {
+  //   console.log("fetchEval")
+  //   const source_docs = apiMessage.sourceDocs || [];
+
+  //   console.log("SOURCE DOCS:", source_docs.length)
+
+  //   setMessageState((state) => ({
+  //     ...state,
+  //     messages: [
+  //       ...state.messages.map((m) => {
+  //         if (
+  //           m.message === userMessage.message ||
+  //           m.message === apiMessage.message
+  //         ) {
+  //           m.sourcesEvaluationPending = true;
+  //         }
+  //         return m;
+  //       }),
+  //     ],
+  //     pending: undefined,
+  //   }));
+
+  // try {
+  //   const ctrl = new AbortController();
+  //   console.log("FETCH EVAL")
+  //   fetchEventSource('/api/evaluate_source', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       source_docs,
+  //       userMessage: userMessage.message,
+  //       apiMessage: apiMessage.message,
+  //     }),
+  //     signal: ctrl.signal,
+  //     onmessage: (event: any) => {
+  //       let { source_scores } = JSON.parse(event.data);
+  //       console.log('SOURCE SCORES BEFORE: ', source_scores);
+  //       // source_scores = JSON.parse(source_scores)
+  //       if (source_scores?.length > 0) {
+  //         source_scores = source_scores.map((s: string) => JSON.parse(s));
+  //         source_scores = source_scores.map((s: any, i: number) => {
+  //           s.id = createHashId(source_docs[i].pageContent);
+  //           console.log("ID CREATED: ", s.id)
+  //           return s;
+  //         });
+  //       } else {
+  //         ctrl.abort();
+  //         return;
+  //       }
+  //       console.log('SOURCE SCORES AFTER:', source_scores);
+
+  //       console.log("STATE MESSAGES:", messageState)
+
+  //       setMessageState((state) => ({
+  //         ...state,
+  //         messages: [
+  //           ...state.messages.map((m) => {
+  //             // console.log("M:", m)
+  //             if (
+  //               m.message === userMessage.message ||
+  //               m.message === apiMessage.message
+  //             ) {
+  //               if (
+  //                 m.sourceDocs &&
+  //                 source_scores?.length
+  //               ) {
+  //                 // Filter out source docs that have a relevance score less than 5
+  //                 m.sourceDocs = m.sourceDocs.filter((d, i) => {
+  //                   let score = source_scores.filter((s: any) => s.id === createHashId(d.pageContent));
+  //                   if (score.length > 0) {
+  //                     score = score[0].score;
+  //                   } else {
+  //                     score = 0;
+  //                   }
+  //                   // console.log('SCORE: ', score, score >= 5);
+  //                   // console.log("ExPL:", source_scores[i].explanation)
+  //                   return score >= 5;
+  //                 });
+  //                 m.sourcesEvaluated = true;
+  //                 m.sourcesEvaluationPending = false;
+  //                 // console.log('M EVALUATED:', m);
+  //               }
+  //             }
+  //             return m;
+  //           }),
+  //         ],
+  //         pending: undefined,
+  //       }));
+
+  //       ctrl.abort();
+  //     },
+  //   }).then(() => {
+  //     console.log('Fetch request started');
+  //   }).catch((error) => {
+  //     if (error.name === 'AbortError') {
+  //       console.log('Fetch request aborted');
+  //     } else {
+  //       console.log('Fetch request error', error);
+  //     }
+  //   });;
+  // } catch (error) {
+  //   setError(
+  //     'An error occurred while fetching the data. Please try again.',
+  //   );
+  //   console.log('error', error);
+  // }
+  //   }
+  // };
+
+  // const fetchEval = async (userMessage: Message, apiMessage: Message) => {
+
+  //   console.log("fetchEval PRE")
+  //   if (
+  //     userMessage.type === 'userMessage' &&
+  //     !apiMessage.sourcesEvaluated &&
+  //     !apiMessage.sourcesEvaluationPending &&
+  //     apiMessage.sourceDocs?.length
+  //   ) {
+  //     console.log("fetchEval")
+  //     const source_docs = apiMessage.sourceDocs || [];
+
+  //     console.log("SOURCE DOCS:", source_docs.length)
+
+  //     setMessageState((state) => ({
+  //       ...state,
+  //       messages: [
+  //         ...state.messages.map((m) => {
+  //           if (
+  //             m.message === userMessage.message ||
+  //             m.message === apiMessage.message
+  //           ) {
+  //             m.sourcesEvaluationPending = true;
+  //           }
+  //           return m;
+  //         }),
+  //       ],
+  //       pending: undefined,
+  //     }));
+
+  //     try {
+  //       const ctrl = new AbortController();
+  //       console.log("FETCH EVAL")
+  //       fetchEventSource('/api/evaluate_source', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           source_docs,
+  //           userMessage: userMessage.message,
+  //           apiMessage: apiMessage.message,
+  //         }),
+  //         signal: ctrl.signal,
+  //         onmessage: (event: any) => {
+  //           let { source_scores } = JSON.parse(event.data);
+  //           console.log('SOURCE SCORES BEFORE: ', source_scores);
+  //           // source_scores = JSON.parse(source_scores)
+  //           if (source_scores?.length > 0) {
+  //             source_scores = source_scores.map((s: string) => JSON.parse(s));
+  //             source_scores = source_scores.map((s: any, i: number) => {
+  //               s.id = createHashId(source_docs[i].pageContent);
+  //               console.log("ID CREATED: ", s.id)
+  //               return s;
+  //             });
+  //           } else {
+  //             ctrl.abort();
+  //             return;
+  //           }
+  //           console.log('SOURCE SCORES AFTER:', source_scores);
+
+  //           console.log("STATE MESSAGES:", messageState)
+
+  //           setMessageState((state) => ({
+  //             ...state,
+  //             messages: [
+  //               ...state.messages.map((m) => {
+  //                 // console.log("M:", m)
+  //                 if (
+  //                   m.message === userMessage.message ||
+  //                   m.message === apiMessage.message
+  //                 ) {
+  //                   if (
+  //                     m.sourceDocs &&
+  //                     source_scores?.length
+  //                   ) {
+  //                     // Filter out source docs that have a relevance score less than 5
+  //                     m.sourceDocs = m.sourceDocs.filter((d, i) => {
+  //                       let score = source_scores.filter((s: any) => s.id === createHashId(d.pageContent));
+  //                       if (score.length > 0) {
+  //                         score = score[0].score;
+  //                       } else {
+  //                         score = 0;
+  //                       }
+  //                       // console.log('SCORE: ', score, score >= 5);
+  //                       // console.log("ExPL:", source_scores[i].explanation)
+  //                       return score >= 5;
+  //                     });
+  //                     m.sourcesEvaluated = true;
+  //                     m.sourcesEvaluationPending = false;
+  //                     // console.log('M EVALUATED:', m);
+  //                   }
+  //                 }
+  //                 return m;
+  //               }),
+  //             ],
+  //             pending: undefined,
+  //           }));
+
+  //           ctrl.abort();
+  //         },
+  //       }).then(() => {
+  //         console.log('Fetch request started');
+  //       }).catch((error) => {
+  //         if (error.name === 'AbortError') {
+  //           console.log('Fetch request aborted');
+  //         } else {
+  //           console.log('Fetch request error', error);
+  //         }
+  //       });;
+  //     } catch (error) {
+  //       setError(
+  //         'An error occurred while fetching the data. Please try again.',
+  //       );
+  //       console.log('error', error);
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     // console.log('MESSAGE STATE CHANGED:', messageState);
@@ -218,7 +451,7 @@ export default function Home() {
           history,
         }),
         signal: ctrl.signal,
-        onmessage: (event) => {
+        onmessage: (event: any) => {
           if (event.data === '[DONE]') {
             setMessageState((state) => ({
               history: [...state.history, [question, state.pending ?? '']],
