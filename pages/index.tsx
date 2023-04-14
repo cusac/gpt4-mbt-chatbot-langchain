@@ -29,6 +29,8 @@ export default function Home() {
       {
         message: 'Hi, what MBT related questions do you have?',
         type: 'apiMessage',
+        sourcesEvaluated: false,
+        sourcesEvaluationPending: false,
       },
     ],
     history: [],
@@ -43,6 +45,134 @@ export default function Home() {
   useEffect(() => {
     textAreaRef.current?.focus();
   }, []);
+
+  // Function that takes in text and creates a hash Id number
+  const createHashId = (text: string) => {
+    return text
+      .split('')
+      .reduce((a, b) => {
+        a = (a << 5) - a + b.charCodeAt(0);
+        return a & a;
+      }, 0)
+  };
+
+  const fetchEval = async (userMessage: Message, apiMessage: Message) => {
+    // console.log("MESSAGE:", message)
+    if (
+      userMessage.type === 'userMessage' &&
+      !apiMessage.sourcesEvaluated &&
+      !apiMessage.sourcesEvaluationPending &&
+      apiMessage.sourceDocs?.length
+    ) {
+      console.log("fetchEval")
+      const source_docs = apiMessage.sourceDocs || [];
+
+      setMessageState((state) => ({
+        ...state,
+        messages: [
+          ...state.messages.map((m) => {
+            if (
+              m.message === userMessage.message ||
+              m.message === apiMessage.message
+            ) {
+              m.sourcesEvaluationPending = true;
+            }
+            return m;
+          }),
+        ],
+        pending: undefined,
+      }));
+
+      try {
+        const ctrl = new AbortController();
+        fetchEventSource('/api/evaluate_source', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            source_docs,
+            userMessage: userMessage.message,
+            apiMessage: apiMessage.message,
+          }),
+          signal: ctrl.signal,
+          onmessage: (event: any) => {
+            let { source_scores } = JSON.parse(event.data);
+            // console.log('SOURCE SCORES BEFORE: ', source_scores);
+            // source_scores = JSON.parse(source_scores)
+            if (source_scores?.length > 0) {
+              source_scores = source_scores.map((s: string) => JSON.parse(s));
+              source_scores = source_scores.map((s: any, i: number) => {
+                s.id = createHashId(source_docs[i].pageContent);
+                return s;
+              });
+            } else {
+              return;
+            }
+            console.log('SOURCE SCORES AFTER:', source_scores);
+
+            console.log("STATE MESSAGES:", messageState)
+
+            setMessageState((state) => ({
+              ...state,
+              messages: [
+                ...state.messages.map((m) => {
+                  // console.log("M:", m)
+                  if (
+                    m.message === userMessage.message ||
+                    m.message === apiMessage.message
+                  ) {
+                    if (
+                      m.sourceDocs &&
+                      source_scores?.length
+                    ) {
+                      // Filter out source docs that have a relevance score less than 5
+                      m.sourceDocs = m.sourceDocs.filter((d, i) => {
+                        let score = source_scores.filter((s: any) => s.id === createHashId(d.pageContent));
+                        if (score.length > 0) {
+                          score = score[0].score;
+                        } else {
+                          score = 0;
+                        }
+                        // console.log('SCORE: ', score, score >= 5);
+                        // console.log("ExPL:", source_scores[i].explanation)
+                        return score >= 5;
+                      });
+                      m.sourcesEvaluated = true;
+                      m.sourcesEvaluationPending = false;
+                      // console.log('M EVALUATED:', m);
+                    }
+                  }
+                  return m;
+                }),
+              ],
+              pending: undefined,
+            }));
+          },
+        });
+      } catch (error) {
+        setError(
+          'An error occurred while fetching the data. Please try again.',
+        );
+        console.log('error', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    // console.log('MESSAGE STATE CHANGED:', messageState);
+    for (const [index, message] of messageState.messages.entries()) {
+      if (
+        index < messageState.messages.length - 1 &&
+        !message.sourcesEvaluationPending
+      ) {
+        fetchEval(
+          messageState.messages[index],
+          messageState.messages[index + 1],
+        );
+      }
+    }
+  }, [messageState]);
 
   //handle form submission
   async function handleSubmit(e: any) {
@@ -64,6 +194,8 @@ export default function Home() {
         {
           type: 'userMessage',
           message: question,
+          sourcesEvaluated: false,
+          sourcesEvaluationPending: false,
         },
       ],
       pending: undefined,
@@ -96,6 +228,8 @@ export default function Home() {
                   type: 'apiMessage',
                   message: state.pending ?? '',
                   sourceDocs: state.pendingSourceDocs,
+                  sourcesEvaluated: false,
+                  sourcesEvaluationPending: false,
                 },
               ],
               pending: undefined,
@@ -106,6 +240,7 @@ export default function Home() {
           } else {
             const data = JSON.parse(event.data);
             if (data.sourceDocs) {
+              // console.log('SOURCE DOCS: ', data.sourceDocs);
               setMessageState((state) => ({
                 ...state,
                 pendingSourceDocs: data.sourceDocs,
@@ -147,6 +282,7 @@ export default function Home() {
               type: 'apiMessage',
               message: pending,
               sourceDocs: pendingSourceDocs,
+              sourcesEvaluated: false,
             },
           ]
         : []),
@@ -212,36 +348,38 @@ export default function Home() {
                           </ReactMarkdown>
                         </div>
                       </div>
-                      {message.sourceDocs && (
-                        <div
-                          className="p-5"
-                          key={`sourceDocsAccordion-${index}`}
-                        >
-                          <Accordion
-                            type="single"
-                            collapsible
-                            className="flex-col"
-                          >
-                            {message.sourceDocs.map((doc, index) => (
-                              <div key={`messageSourceDocs-${index}`}>
-                                <AccordionItem value={`item-${index}`}>
-                                  <AccordionTrigger>
-                                    <h3>Source {index + 1}</h3>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ReactMarkdown linkTarget="_blank">
-                                      {doc.pageContent}
-                                    </ReactMarkdown>
-                                    <p className="mt-2">
-                                      <b>Source:</b> {doc.metadata.source}
-                                    </p>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </div>
-                            ))}
-                          </Accordion>
-                        </div>
-                      )}
+                      {message.sourcesEvaluated
+                        ? message.sourceDocs && (
+                            <div
+                              className="p-5"
+                              key={`sourceDocsAccordion-${index}`}
+                            >
+                              <Accordion
+                                type="single"
+                                collapsible
+                                className="flex-col"
+                              >
+                                {message.sourceDocs.map((doc, index) => (
+                                  <div key={`messageSourceDocs-${index}`}>
+                                    <AccordionItem value={`item-${index}`}>
+                                      <AccordionTrigger>
+                                        <h3>Source {index + 1}</h3>
+                                      </AccordionTrigger>
+                                      <AccordionContent>
+                                        <ReactMarkdown linkTarget="_blank">
+                                          {doc.pageContent}
+                                        </ReactMarkdown>
+                                        <p className="mt-2">
+                                          <b>Source:</b> {doc.metadata.source}
+                                        </p>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </div>
+                                ))}
+                              </Accordion>
+                            </div>
+                          )
+                        : null}
                     </>
                   );
                 })}
@@ -282,7 +420,7 @@ export default function Home() {
                     placeholder={
                       loading
                         ? 'Waiting for response...'
-                        : 'What\'s on your mind?'
+                        : "What's on your mind?"
                     }
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}

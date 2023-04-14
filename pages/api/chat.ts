@@ -48,12 +48,13 @@ export default async function handler(
 
   try {
     //Ask a question
+    // console.log("History: ", history)
     const response = await chain.call({
       question: sanitizedQuestion,
       chat_history: history || [],
     });
 
-    console.log('response', response);
+    // console.log('response', response);
     sendData(JSON.stringify({ sourceDocs: response.sourceDocuments }));
   } catch (error) {
     console.log('error', error);
