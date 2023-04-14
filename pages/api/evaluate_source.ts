@@ -52,7 +52,7 @@ export default async function handler(
     
     
 
-    console.log("EVAL RESPONSE:", response)
+    // console.log("EVAL RESPONSE:", response)
     // console.log('response', response);
     sendData(JSON.stringify({ source_scores: response.map(r => r.text) }));
     res.end();
