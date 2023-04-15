@@ -14,14 +14,32 @@ export type SourceScore = {
   sourceDoc: SourceDoc;
 };
 
+export type MBTLink = {
+  link: string;
+  title: string;
+  description: string;
+};
+
 export type SourceDoc = {
   pageContent: string;
   metadata: {
     'loc.lines.from': number;
     'loc.lines.to': number;
     source: string;
-    link: string;
+    startTs?: number;
+    endTs?: number;
+    ytLink?: string;
+    mbtLinks: MBTLink[];
   };
+};
+
+export type MBTSegmentInfo = {
+  videoId: string;
+  segmentId: string;
+  title: string;
+  description: string;
+  start: number;
+  end: number;
 };
 
 function timestampToSeconds(timestamp: string): number | null {
@@ -76,6 +94,22 @@ export const createHashId = (text: string) => {
   }, 0);
 };
 
+function extractVideoId(ytLink: string) {
+  const ytRegex =
+    /^(?:https?:\/\/)?(?:www\.)?(?:youtu(?:\.be\/|be\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)))([\w\-]{10,12})(?:[\&\?](?:t=([0-9hms]{1,9}|[0-9]{1,9})))?.*$/;
+  const match = ytLink.match(ytRegex);
+
+  if (match && match[1]) {
+    return match[1];
+  } else {
+    throw new Error('Invalid YouTube link.');
+  }
+}
+function isValidVideoId(videoId: string) {
+  const videoIdRegex = /^[\w-]{10,12}$/;
+  return videoIdRegex.test(videoId);
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
@@ -108,7 +142,22 @@ export default async function handler(
   // console.log("EVALUATIONS SOURCES BASED ON QUESTION:", userMessage, apiMessage, source_docs)
 
   try {
-    const promises = source_docs.map((doc: any, index: number) =>
+    source_docs = source_docs.map((doc: SourceDoc, index: number) => {
+      const { first, last } = extractFirstAndLastTimestamps(doc.pageContent);
+      doc.metadata.startTs = first || undefined;
+      doc.metadata.endTs = last || undefined;
+      const ytLink = extractYTLink(doc.metadata.source);
+      if (!ytLink) {
+        doc.metadata.ytLink = 'No YouTube link found';
+      } else {
+        // ytlink with timestamp of first
+        const ytLinkWithTimestamp = ytLink + `&t=${first}`;
+        doc.metadata.ytLink = `${ytLinkWithTimestamp}`;
+      }
+      return doc;
+    });
+
+    const evalPromises = source_docs.map((doc: any, index: number) =>
       chain.call({
         user_message: sanitizedUserMessage,
         api_message: sanitizedApiMessage,
@@ -116,26 +165,33 @@ export default async function handler(
         source_doc_id: createHashId(doc.pageContent),
       }),
     );
-    const response = await Promise.all(promises);
 
-    let source_scores = response.map((r) => JSON.parse(r.text));
+    const mbtSegmentPromises = source_docs.map((doc: any, index: number) => {
+      // Get youtube video id from link
+      const videoId = extractVideoId(doc.metadata.ytLink);
 
-    console.log('ORIGINAL SOURCE SCORES:', source_scores);
-
-    source_docs = source_docs.map((doc: SourceDoc, index: number) => {
-      const { first, last } = extractFirstAndLastTimestamps(doc.pageContent);
-      const ytLink = extractYTLink(doc.metadata.source);
-      if (!ytLink) {
-        doc.metadata.link = 'No YouTube link found';
-      } else {
-        // ytlink with timestamp of first
-        const ytLinkWithTimestamp = ytLink + `&t=${first}`;
-        doc.metadata.link = `${ytLinkWithTimestamp}`;
+      if (!isValidVideoId(videoId)) {
+        throw new Error('Invalid YouTube video ID: ' + videoId);
       }
-      return doc;
+
+      // Fetch GET localhost:8080/video/segments/timestamp-range with query parameters: "videoId", "start" and "end"
+      const url = `http://Justins-MBP.attlocal.net:8080/video/segments/timestamp-range?videoId=${videoId}&start=${doc.metadata.startTs}&end=${doc.metadata.endTs}`;
+      console.log('URL', url);
+      return fetch(url).then((response) => response.json());
     });
 
-    // console.log("NEW SOURCE DOCS:", source_docs)
+    let [mbtSegments, sourceScoresText]: [
+      MBTSegmentInfo[],
+      { text: string }[],
+    ] = await Promise.all([
+      Promise.all(mbtSegmentPromises),
+      Promise.all(evalPromises),
+    ]);
+
+    // Flatten mbtSegments
+    mbtSegments = mbtSegments.flat();
+
+    let source_scores = sourceScoresText.map((r) => JSON.parse(r.text));
 
     // Update source_scores with source_doc id
     source_scores = source_scores.map((score: SourceScore, index: number) => {
@@ -143,6 +199,19 @@ export default async function handler(
         (sd: SourceDoc) =>
           createHashId(sd.pageContent) === Number(score.source_doc_id),
       )[0];
+      const docMbtSegments = mbtSegments.filter(
+        (mbtSegment) =>
+          mbtSegment.videoId ===
+          extractVideoId(score.sourceDoc.metadata.ytLink!),
+      );
+
+      score.sourceDoc.metadata.mbtLinks = docMbtSegments.map((mbtSegment) => {
+        return {
+          title: mbtSegment.title,
+          description: mbtSegment.description,
+          link: `https://videosearch.my-big-toe.com/${mbtSegment.segmentId}`,
+        };
+      });
       return score;
     });
 

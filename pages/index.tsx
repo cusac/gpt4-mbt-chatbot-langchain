@@ -13,7 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { SourceScore } from './api/evaluate_source';
+import { MBTLink, SourceScore } from './api/evaluate_source';
 
 export default function Home() {
   const [query, setQuery] = useState<string>('');
@@ -156,244 +156,7 @@ export default function Home() {
     }
   };
 
-  // console.log("fetchEval PRE")
-  // if (
-  //   userMessage.type === 'userMessage' &&
-  //   !apiMessage.sourcesEvaluated &&
-  //   !apiMessage.sourcesEvaluationPending &&
-  //   apiMessage.sourceDocs?.length
-  // ) {
-  //   console.log("fetchEval")
-  //   const source_docs = apiMessage.sourceDocs || [];
-
-  //   console.log("SOURCE DOCS:", source_docs.length)
-
-  //   setMessageState((state) => ({
-  //     ...state,
-  //     messages: [
-  //       ...state.messages.map((m) => {
-  //         if (
-  //           m.message === userMessage.message ||
-  //           m.message === apiMessage.message
-  //         ) {
-  //           m.sourcesEvaluationPending = true;
-  //         }
-  //         return m;
-  //       }),
-  //     ],
-  //     pending: undefined,
-  //   }));
-
-  // try {
-  //   const ctrl = new AbortController();
-  //   console.log("FETCH EVAL")
-  //   fetchEventSource('/api/evaluate_source', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       source_docs,
-  //       userMessage: userMessage.message,
-  //       apiMessage: apiMessage.message,
-  //     }),
-  //     signal: ctrl.signal,
-  //     onmessage: (event: any) => {
-  //       let { source_scores } = JSON.parse(event.data);
-  //       console.log('SOURCE SCORES BEFORE: ', source_scores);
-  //       // source_scores = JSON.parse(source_scores)
-  //       if (source_scores?.length > 0) {
-  //         source_scores = source_scores.map((s: string) => JSON.parse(s));
-  //         source_scores = source_scores.map((s: any, i: number) => {
-  //           s.id = createHashId(source_docs[i].pageContent);
-  //           console.log("ID CREATED: ", s.id)
-  //           return s;
-  //         });
-  //       } else {
-  //         ctrl.abort();
-  //         return;
-  //       }
-  //       console.log('SOURCE SCORES AFTER:', source_scores);
-
-  //       console.log("STATE MESSAGES:", messageState)
-
-  //       setMessageState((state) => ({
-  //         ...state,
-  //         messages: [
-  //           ...state.messages.map((m) => {
-  //             // console.log("M:", m)
-  //             if (
-  //               m.message === userMessage.message ||
-  //               m.message === apiMessage.message
-  //             ) {
-  //               if (
-  //                 m.sourceDocs &&
-  //                 source_scores?.length
-  //               ) {
-  //                 // Filter out source docs that have a relevance score less than 5
-  //                 m.sourceDocs = m.sourceDocs.filter((d, i) => {
-  //                   let score = source_scores.filter((s: any) => s.id === createHashId(d.pageContent));
-  //                   if (score.length > 0) {
-  //                     score = score[0].score;
-  //                   } else {
-  //                     score = 0;
-  //                   }
-  //                   // console.log('SCORE: ', score, score >= 5);
-  //                   // console.log("ExPL:", source_scores[i].explanation)
-  //                   return score >= 5;
-  //                 });
-  //                 m.sourcesEvaluated = true;
-  //                 m.sourcesEvaluationPending = false;
-  //                 // console.log('M EVALUATED:', m);
-  //               }
-  //             }
-  //             return m;
-  //           }),
-  //         ],
-  //         pending: undefined,
-  //       }));
-
-  //       ctrl.abort();
-  //     },
-  //   }).then(() => {
-  //     console.log('Fetch request started');
-  //   }).catch((error) => {
-  //     if (error.name === 'AbortError') {
-  //       console.log('Fetch request aborted');
-  //     } else {
-  //       console.log('Fetch request error', error);
-  //     }
-  //   });;
-  // } catch (error) {
-  //   setError(
-  //     'An error occurred while fetching the data. Please try again.',
-  //   );
-  //   console.log('error', error);
-  // }
-  //   }
-  // };
-
-  // const fetchEval = async (userMessage: Message, apiMessage: Message) => {
-
-  //   console.log("fetchEval PRE")
-  //   if (
-  //     userMessage.type === 'userMessage' &&
-  //     !apiMessage.sourcesEvaluated &&
-  //     !apiMessage.sourcesEvaluationPending &&
-  //     apiMessage.sourceDocs?.length
-  //   ) {
-  //     console.log("fetchEval")
-  //     const source_docs = apiMessage.sourceDocs || [];
-
-  //     console.log("SOURCE DOCS:", source_docs.length)
-
-  //     setMessageState((state) => ({
-  //       ...state,
-  //       messages: [
-  //         ...state.messages.map((m) => {
-  //           if (
-  //             m.message === userMessage.message ||
-  //             m.message === apiMessage.message
-  //           ) {
-  //             m.sourcesEvaluationPending = true;
-  //           }
-  //           return m;
-  //         }),
-  //       ],
-  //       pending: undefined,
-  //     }));
-
-  //     try {
-  //       const ctrl = new AbortController();
-  //       console.log("FETCH EVAL")
-  //       fetchEventSource('/api/evaluate_source', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({
-  //           source_docs,
-  //           userMessage: userMessage.message,
-  //           apiMessage: apiMessage.message,
-  //         }),
-  //         signal: ctrl.signal,
-  //         onmessage: (event: any) => {
-  //           let { source_scores } = JSON.parse(event.data);
-  //           console.log('SOURCE SCORES BEFORE: ', source_scores);
-  //           // source_scores = JSON.parse(source_scores)
-  //           if (source_scores?.length > 0) {
-  //             source_scores = source_scores.map((s: string) => JSON.parse(s));
-  //             source_scores = source_scores.map((s: any, i: number) => {
-  //               s.id = createHashId(source_docs[i].pageContent);
-  //               console.log("ID CREATED: ", s.id)
-  //               return s;
-  //             });
-  //           } else {
-  //             ctrl.abort();
-  //             return;
-  //           }
-  //           console.log('SOURCE SCORES AFTER:', source_scores);
-
-  //           console.log("STATE MESSAGES:", messageState)
-
-  //           setMessageState((state) => ({
-  //             ...state,
-  //             messages: [
-  //               ...state.messages.map((m) => {
-  //                 // console.log("M:", m)
-  //                 if (
-  //                   m.message === userMessage.message ||
-  //                   m.message === apiMessage.message
-  //                 ) {
-  //                   if (
-  //                     m.sourceDocs &&
-  //                     source_scores?.length
-  //                   ) {
-  //                     // Filter out source docs that have a relevance score less than 5
-  //                     m.sourceDocs = m.sourceDocs.filter((d, i) => {
-  //                       let score = source_scores.filter((s: any) => s.id === createHashId(d.pageContent));
-  //                       if (score.length > 0) {
-  //                         score = score[0].score;
-  //                       } else {
-  //                         score = 0;
-  //                       }
-  //                       // console.log('SCORE: ', score, score >= 5);
-  //                       // console.log("ExPL:", source_scores[i].explanation)
-  //                       return score >= 5;
-  //                     });
-  //                     m.sourcesEvaluated = true;
-  //                     m.sourcesEvaluationPending = false;
-  //                     // console.log('M EVALUATED:', m);
-  //                   }
-  //                 }
-  //                 return m;
-  //               }),
-  //             ],
-  //             pending: undefined,
-  //           }));
-
-  //           ctrl.abort();
-  //         },
-  //       }).then(() => {
-  //         console.log('Fetch request started');
-  //       }).catch((error) => {
-  //         if (error.name === 'AbortError') {
-  //           console.log('Fetch request aborted');
-  //         } else {
-  //           console.log('Fetch request error', error);
-  //         }
-  //       });;
-  //     } catch (error) {
-  //       setError(
-  //         'An error occurred while fetching the data. Please try again.',
-  //       );
-  //       console.log('error', error);
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
-    // console.log('MESSAGE STATE CHANGED:', messageState);
     for (const [index, message] of messageState.messages.entries()) {
       if (
         index < messageState.messages.length - 1 &&
@@ -473,7 +236,6 @@ export default function Home() {
           } else {
             const data = JSON.parse(event.data);
             if (data.sourceDocs) {
-              // console.log('SOURCE DOCS: ', data.sourceDocs);
               setMessageState((state) => ({
                 ...state,
                 pendingSourceDocs: data.sourceDocs,
@@ -600,11 +362,14 @@ export default function Home() {
                                       </AccordionTrigger>
                                       <AccordionContent>
                                         <ReactMarkdown linkTarget="_blank">
-                                          {doc.pageContent}
+                                          {`**YouTube link**: [${doc.metadata.ytLink}](${doc.metadata.ytLink})  \n\n  ---  \n\n  ---  \n\n  ---  \n\n` +
+                                            doc.metadata.mbtLinks
+                                              .map(
+                                                (link: MBTLink) =>
+                                                  `**Segment Title**: ${link.title}  \n**Segment Description**: ${link.description}  \n**Segment Link**: [${link.link}](${link.link})`,
+                                              )
+                                              .join('  \n\n  ---  \n\n  ---  \n\n  ---  \n\n')}
                                         </ReactMarkdown>
-                                        <p className="mt-2">
-                                          <b>Source:</b> {doc.metadata.source}
-                                        </p>
                                       </AccordionContent>
                                     </AccordionItem>
                                   </div>
