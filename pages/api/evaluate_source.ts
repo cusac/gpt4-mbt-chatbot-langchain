@@ -6,6 +6,11 @@ import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
 import * as fs from 'fs';
 
+if (!process.env.MBT_API_URL) {
+  throw new Error('Missing MBT API host in .env file');
+}
+
+
 // Source Scores type
 export type SourceScore = {
   source_doc_id: number;
@@ -124,22 +129,8 @@ export default async function handler(
   const sanitizedUserMessage = userMessage.trim().replaceAll('\n', ' ');
   const sanitizedApiMessage = apiMessage.trim().replaceAll('\n', ' ');
 
-  // res.writeHead(200, {
-  //   'Content-Type': 'text/event-stream',
-  //   'Cache-Control': 'no-cache, no-transform',
-  //   Connection: 'keep-alive',
-  // });
-
-  // const sendData = (data: string) => {
-  //   res.write(`data: ${data}\n\n`);
-  // };
-
-  // sendData(JSON.stringify({ data: '' }));
-
   //create chain
   const chain = evalQuestionChain();
-
-  // console.log("EVALUATIONS SOURCES BASED ON QUESTION:", userMessage, apiMessage, source_docs)
 
   try {
     source_docs = source_docs.map((doc: SourceDoc, index: number) => {
@@ -174,19 +165,26 @@ export default async function handler(
         throw new Error('Invalid YouTube video ID: ' + videoId);
       }
 
+      console.log('FETCHING SEGMENTS BASED ON DOC:', doc);
+
       // Fetch GET localhost:8080/video/segments/timestamp-range with query parameters: "videoId", "start" and "end"
-      const url = `http://Justins-MBP.attlocal.net:8080/video/segments/timestamp-range?videoId=${videoId}&start=${doc.metadata.startTs}&end=${doc.metadata.endTs}`;
+      const url = `${process.env.MBT_API_URL}/video/segments/timestamp-range?videoId=${videoId}&start=${doc.metadata.startTs}&end=${doc.metadata.endTs}`;
       console.log('URL', url);
       return fetch(url).then((response) => response.json());
     });
 
-    let [mbtSegments, sourceScoresText]: [
-      MBTSegmentInfo[],
-      { text: string }[],
-    ] = await Promise.all([
-      Promise.all(mbtSegmentPromises),
-      Promise.all(evalPromises),
-    ]);
+    let mbtSegments: MBTSegmentInfo[] = [];
+    let sourceScoresText: { text: string }[] = [];
+
+    try {
+      [mbtSegments, sourceScoresText] = await Promise.all([
+        Promise.all(mbtSegmentPromises),
+        Promise.all(evalPromises),
+      ]);
+    } catch (err) {
+      console.error('Error processing source docs: ', err);
+      throw err;
+    }
 
     // Flatten mbtSegments
     mbtSegments = mbtSegments.flat();

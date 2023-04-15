@@ -8,7 +8,8 @@ async function extractYouTubeLink(html: string) {
   return match ? match[0] : null;
 }
 
-async function processDocxFile(inputDocxPath: string) {
+async function processDocxFile(inputDocxPath: string, outputTxtPath: string) {
+  console.log('outputTxtPath', path.dirname(outputTxtPath));
   try {
     const { value: html } = await mammoth.convertToHtml({
       path: inputDocxPath,
@@ -17,7 +18,7 @@ async function processDocxFile(inputDocxPath: string) {
 
     if (youTubeLink) {
       const outputPath = path.join(
-        path.dirname(inputDocxPath),
+        outputTxtPath,
         `${path.basename(inputDocxPath, '.docx')}_yt_link.txt`,
       );
       await fs.writeFile(outputPath, youTubeLink);
@@ -30,23 +31,26 @@ async function processDocxFile(inputDocxPath: string) {
   }
 }
 
-async function processAllDocxFiles(directoryPath: string): Promise<void> {
+async function processAllDocxFiles(
+  inputDirectoryPath: string,
+  outputDirectoryPath: string,
+): Promise<void> {
   try {
-    const files = await fs.readdir(directoryPath);
-    const docxFiles = files.filter(file => path.extname(file) === '.docx');
+    const files = await fs.readdir(inputDirectoryPath);
+    const docxFiles = files.filter((file) => path.extname(file) === '.docx');
 
     for (const docxFile of docxFiles) {
-      const inputDocxPath = path.join(directoryPath, docxFile);
+      const inputDocxPath = path.join(inputDirectoryPath, docxFile);
       const txtFilePath = path.join(
-        directoryPath,
-        `${path.basename(docxFile, '.docx')}_yt_link.txt`
+        outputDirectoryPath,
+        `${path.basename(docxFile, '.docx')}_yt_link.txt`,
       );
 
       try {
         await fs.access(txtFilePath);
         // console.log(`Matching .txt file already exists for: ${docxFile}`);
       } catch {
-        await processDocxFile(inputDocxPath);
+        await processDocxFile(inputDocxPath, outputDirectoryPath);
       }
     }
   } catch (error) {
@@ -57,12 +61,10 @@ async function processAllDocxFiles(directoryPath: string): Promise<void> {
 export const run = async () => {
   try {
     // Create an absolute path to the relative path of "docs/With Timestamps"
-    const inputDirectoryPath = path.join(
-      process.cwd(),
-      'docs/With Timestamps',
-    );
-    console.log("PATH", inputDirectoryPath)
-    await processAllDocxFiles(inputDirectoryPath);
+    const inputDirectoryPath = path.join(process.cwd(), 'docs/With Timestamps');
+    const outputDirectoryPath = path.join(process.cwd(), 'docs/mbt_yt_links');
+    console.log('DOCS PATH', inputDirectoryPath);
+    await processAllDocxFiles(inputDirectoryPath, outputDirectoryPath);
   } catch (error) {
     console.log('error', error);
     throw new Error('Failed to extract links');

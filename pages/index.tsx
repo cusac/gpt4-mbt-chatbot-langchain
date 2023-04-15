@@ -18,6 +18,7 @@ import { MBTLink, SourceScore } from './api/evaluate_source';
 export default function Home() {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [evaluatingSources, setEvaluatingSources] = useState<boolean>(false);
   const [sourceDocs, setSourceDocs] = useState<Document[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [messageState, setMessageState] = useState<{
@@ -85,6 +86,7 @@ export default function Home() {
       }));
 
       try {
+        setEvaluatingSources(true);
         const response = await fetch('/api/evaluate_source', {
           method: 'POST',
           headers: {
@@ -152,6 +154,8 @@ export default function Home() {
         }));
       } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
+      } finally {
+        setEvaluatingSources(false);
       }
     }
   };
@@ -278,6 +282,7 @@ export default function Home() {
               message: pending,
               sourceDocs: pendingSourceDocs,
               sourcesEvaluated: false,
+              sourcesEvaluationPending: false,
             },
           ]
         : []),
@@ -343,6 +348,12 @@ export default function Home() {
                           </ReactMarkdown>
                         </div>
                       </div>
+
+                      {message.sourcesEvaluationPending && (
+                        <div className={styles.loadingwheel}>
+                          <LoadingDots color="#000" />
+                        </div>
+                      )}
                       {message.sourcesEvaluated
                         ? message.sourceDocs && (
                             <div
@@ -368,7 +379,9 @@ export default function Home() {
                                                 (link: MBTLink) =>
                                                   `**Segment Title**: ${link.title}  \n**Segment Description**: ${link.description}  \n**Segment Link**: [${link.link}](${link.link})`,
                                               )
-                                              .join('  \n\n  ---  \n\n  ---  \n\n  ---  \n\n')}
+                                              .join(
+                                                '  \n\n  ---  \n\n  ---  \n\n  ---  \n\n',
+                                              )}
                                         </ReactMarkdown>
                                       </AccordionContent>
                                     </AccordionItem>
@@ -418,6 +431,8 @@ export default function Home() {
                     placeholder={
                       loading
                         ? 'Waiting for response...'
+                        : evaluatingSources
+                        ? 'Fetching sources...'
                         : "What's on your mind?"
                     }
                     value={query}
@@ -426,10 +441,10 @@ export default function Home() {
                   />
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || evaluatingSources}
                     className={styles.generatebutton}
                   >
-                    {loading ? (
+                    {(loading || evaluatingSources) ? (
                       <div className={styles.loadingwheel}>
                         <LoadingDots color="#000" />
                       </div>
