@@ -241,6 +241,7 @@ export default async function handler(
   } catch (error) {
     console.log('error', error);
     // Send error response
+    //@ts-ignore
     res.status(500).json({ message: error?.message });
   }
 }

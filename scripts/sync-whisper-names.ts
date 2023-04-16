@@ -81,6 +81,8 @@ async function getVideoIdsNeedingWhisperUpdate() {
     }
 
     videosWithoutWhisperDoc = data;
+
+    console.log('Videos needing whisper update:', videosWithoutWhisperDoc)
   } catch (err) {
     console.error(err);
     throw new Error('Error getting videos needing whisper update.');
@@ -125,15 +127,15 @@ async function processDocxFile(inputDocxPath: string) {
 
     if (videoId) {
       // Skip file if video is not in the list of videos needing whisper update
-      const video = videosWithoutWhisperDoc.find(
-        (video) => video.ytId === videoId,
-      );
-      if (!video) {
-        console.log(
-          `Skipping file: ${inputDocxPath} because video: ${videoId} is not in the list of videos needing whisper update.`,
-        );
-        return;
-      }
+      // const video = videosWithoutWhisperDoc.find(
+      //   (video) => video.ytId === videoId,
+      // );
+      // if (!video) {
+      //   console.log(
+      //     `Skipping file: ${inputDocxPath} because video: ${videoId} is not in the list of videos needing whisper update.`,
+      //   );
+      //   return;
+      // }
 
       // write doc path to endpoint
       await saveDocName(videoId, inputDocxPath);
