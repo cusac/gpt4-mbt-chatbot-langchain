@@ -10,7 +10,6 @@ if (!process.env.MBT_API_URL) {
   throw new Error('Missing MBT API host in .env file');
 }
 
-
 // Source Scores type
 export type SourceScore = {
   source_doc_id: number;
@@ -82,12 +81,30 @@ function extractFirstAndLastTimestamps(text: string): {
   }
 }
 
-// Given a source_path, extract the file name, then read the contents of a file name that matches the source file name + "_yt_link.txt"
-export function extractYTLink(source_path: string) {
+// Given a source_path, get the ytLink by querying the mbt api
+export async function getYTLinkByDocName(source_path: string) {
   const fileName = source_path.split('/').pop() || '';
-  const ytLinkFileName = fileName?.split('.').shift() + '_yt_link.txt';
-  const ytLinkPath = source_path.replace(fileName, ytLinkFileName);
-  const ytLink = fs.readFileSync(ytLinkPath);
+
+  const url = `${process.env.MBT_API_URL}/find-videoid-by-whisper?whisperDoc=${fileName}`;
+  // Do a GET request to the MBT API with the filename as a query param
+  const response = await fetch(url);
+  const data = await response.json();
+
+  // Check if the response is ok
+  if (!response.ok) {
+    console.log('ERROR', data);
+    throw new Error('Error getting videoId from MBT API');
+  }
+
+  const { videoId } = data;
+
+  // Check videoId
+  if (!isValidVideoId(videoId)) {
+    throw new Error('Invalid videoId');
+  }
+
+  // Create the youtube link
+  const ytLink = `https://www.youtube.com/watch?v=${videoId}`;
   return ytLink;
 }
 
@@ -133,20 +150,23 @@ export default async function handler(
   const chain = evalQuestionChain();
 
   try {
-    source_docs = source_docs.map((doc: SourceDoc, index: number) => {
-      const { first, last } = extractFirstAndLastTimestamps(doc.pageContent);
-      doc.metadata.startTs = first || undefined;
-      doc.metadata.endTs = last || undefined;
-      const ytLink = extractYTLink(doc.metadata.source);
-      if (!ytLink) {
-        doc.metadata.ytLink = 'No YouTube link found';
-      } else {
-        // ytlink with timestamp of first
-        const ytLinkWithTimestamp = ytLink + `&t=${first}`;
-        doc.metadata.ytLink = `${ytLinkWithTimestamp}`;
-      }
-      return doc;
-    });
+    source_docs = await Promise.all(
+      source_docs.map(async (doc: SourceDoc, index: number) => {
+        const { first, last } = extractFirstAndLastTimestamps(doc.pageContent);
+        doc.metadata.startTs = first || undefined;
+        doc.metadata.endTs = last || undefined;
+        const ytLink = await getYTLinkByDocName(doc.metadata.source);
+        if (!ytLink) {
+          doc.metadata.ytLink = 'No YouTube link found';
+        } else {
+          // ytlink with timestamp of first
+          const ytLinkWithTimestamp = ytLink + `&t=${first}`;
+        }
+        return doc;
+      }),
+    );
+
+    console.log('SOURCE DOCS', source_docs);
 
     const evalPromises = source_docs.map((doc: any, index: number) =>
       chain.call({
@@ -167,7 +187,6 @@ export default async function handler(
 
       console.log('FETCHING SEGMENTS BASED ON DOC:', doc);
 
-      // Fetch GET localhost:8080/video/segments/timestamp-range with query parameters: "videoId", "start" and "end"
       const url = `${process.env.MBT_API_URL}/video/segments/timestamp-range?videoId=${videoId}&start=${doc.metadata.startTs}&end=${doc.metadata.endTs}`;
       console.log('URL', url);
       return fetch(url).then((response) => response.json());
@@ -221,5 +240,7 @@ export default async function handler(
     res.end();
   } catch (error) {
     console.log('error', error);
+    // Send error response
+    res.status(500).json({ message: error?.message });
   }
 }
