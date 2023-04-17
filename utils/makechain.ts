@@ -50,7 +50,7 @@ Source Doc: {source_doc}
 
 export const evalQuestionChain = () => {
   return new LLMChain({
-    llm: new OpenAIChat({ temperature: 0 }),
+    llm: new OpenAIChat({ temperature: 0 }, { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' }),
     prompt: SOURCE_DOC_EVAL_PROMPT,
   });
 }
@@ -60,7 +60,7 @@ export const makeChain = (
   onTokenStream?: (token: string) => void,
 ) => {
   const questionGenerator = new LLMChain({
-    llm: new OpenAIChat({ temperature: 1 }),
+    llm: new OpenAIChat({ temperature: 1 }, { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' }),
     prompt: CONDENSE_PROMPT,
   });
   const docChain = loadQAChain(
@@ -77,7 +77,7 @@ export const makeChain = (
             },
           })
         : undefined,
-    }),
+    }, { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' }),
     { prompt: QA_PROMPT },
   );
 
