@@ -1,32 +1,18 @@
 import { spawn } from 'child_process';
-import { Readable } from 'stream';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 // import dotenv
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
-
-const CHANNEL_URL = 'https://www.youtube.com/channel/UC_x5XG1OV2P6uZZ5FSM9Ttw';
-const VIDEO_LIMIT = 5;
-
-async function fetchVideos(
-  channelUrl: string,
-  limit: number,
-): Promise<string[]> {
-  // TODO: Implement fetching videos using YouTube Data API v3
-  // Return an array of video URLs
-}
 
 async function callYouTubeApi(
   endpoint: string,
   params: Record<string, any>,
 ): Promise<any> {
   const key = process.env.YOUTUBE_API_KEY; // Replace with your own API key
-  // let url = `https://www.googleapis.com/youtube/v3/${endpoint}`;
   let url = `https://youtube.googleapis.com/youtube/v3/${endpoint}`;
   params = Object.assign(
     {
-      // part: 'snippet',
-      // maxResults: 50,
       key,
     },
     params,
@@ -56,7 +42,9 @@ async function callYouTubeApi(
   return await response.json();
 }
 
-async function getChannelVideos(youtubeLink: string): Promise<string[]> {
+async function getChannelVideos(
+  youtubeLink: string,
+): Promise<{ channelId: string; videoIds: string[] }> {
   // Extract the video ID from the YouTube link
   const videoId = youtubeLink.match(/[?&]v=([^&]+)/)?.[1];
 
@@ -105,12 +93,7 @@ async function getChannelVideos(youtubeLink: string): Promise<string[]> {
     nextPageToken = playlistItemsResponse.nextPageToken;
   } while (nextPageToken);
 
-  // Construct the YouTube links from the video IDs
-  const youtubeLinks = videoIds.map(
-    (videoId: string) => `https://www.youtube.com/watch?v=${videoId}`,
-  );
-
-  return youtubeLinks;
+  return { channelId, videoIds };
 }
 
 async function executeCommand(command: string, args: string[]): Promise<void> {
@@ -135,17 +118,51 @@ async function executeCommand(command: string, args: string[]): Promise<void> {
 }
 
 async function main() {
-  const videoLink = 'https://www.youtube.com/watch?v=r9sN7v0QzGc'
+  const videoLink = 'https://www.youtube.com/watch?v=r9sN7v0QzGc';
 
-  const videos = await getChannelVideos(videoLink);
+  const downloadedTranscriptsPath = './downloaded_transcripts.json';
 
-  for (const video of videos) {
-    console.log(`Processing video: ${video}`);
+  // Create the downloaded_transcripts.json file if it doesn't exist
+  if (!existsSync(downloadedTranscriptsPath)) {
+    writeFileSync(downloadedTranscriptsPath, '{}');
+  }
+
+  const downloadedTranscripts = JSON.parse(
+    readFileSync(downloadedTranscriptsPath, 'utf-8'),
+  );
+
+  const { channelId, videoIds } = await getChannelVideos(videoLink);
+
+  for (const videoId of videoIds) {
+
+    const videoLink = `https://www.youtube.com/watch?v=${videoId}`;
+
+    if (downloadedTranscripts[channelId]?.includes(videoId)) {
+      console.log(`Skipping video ${videoLink} as it has already been processed`);
+      continue;
+    }
+
+    console.log(`Processing video: ${videoLink}`);
+
+    if (!downloadedTranscripts[channelId]) {
+      downloadedTranscripts[channelId] = [];
+    }
 
     try {
-      await executeCommand('python', ['cli.py', video]);
+      await executeCommand('python', [
+        'cli.py',
+        videoLink,
+        '--output_dir=transcripts',
+      ]);
+
+      downloadedTranscripts[channelId].push(videoId);
+
+      writeFileSync(
+        downloadedTranscriptsPath,
+        JSON.stringify(downloadedTranscripts),
+      );
     } catch (error) {
-      console.error(`Failed to process video ${video}: ${error}`);
+      console.error(`Failed to process video ${videoLink}: ${error}`);
     }
   }
 }
