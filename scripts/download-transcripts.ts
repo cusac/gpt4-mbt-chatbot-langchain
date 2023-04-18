@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+//@ts-ignore
 import AWS from 'aws-sdk';
 
 // import dotenv
@@ -212,7 +213,7 @@ async function main() {
               InstanceIds: [instanceId],
             },
           );
-          waiter.promise().then((resp) => {
+          waiter.promise().then((resp: any) => {
             console.log(resp);
             console.log(
               `Instance ${instanceId} is running and processing video: ${videoLink}`,
