@@ -7,10 +7,12 @@ import yt_dlp as youtube_dl
 from utils import slugify, str2bool, write_srt, write_vtt, youtube_dl_log
 import tempfile
 from urllib.parse import urlparse, parse_qs
+import time
 
 
 
 def main():
+    start_time = time.time()
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("video", nargs="+", type=str,
@@ -67,6 +69,10 @@ def main():
                 write_srt(result["segments"], file=srt, line_length=break_lines)
 
             print("Saved SRT to", os.path.abspath(srt_path))
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"The script took {elapsed_time:.2f} seconds to complete.")
 
 
 def get_audio(urls):
