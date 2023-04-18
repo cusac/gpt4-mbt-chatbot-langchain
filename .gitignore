@@ -40,3 +40,6 @@ next-env.d.ts
 /Notion_DB
 
 /docs/With Timestamps
+/docs/Without Timestamps
+/env
+/scripts/transcripts

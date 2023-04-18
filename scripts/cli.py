@@ -6,6 +6,8 @@ import warnings
 import yt_dlp as youtube_dl
 from utils import slugify, str2bool, write_srt, write_vtt, youtube_dl_log
 import tempfile
+from urllib.parse import urlparse, parse_qs
+
 
 
 def main():
@@ -13,7 +15,7 @@ def main():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("video", nargs="+", type=str,
                         help="video URLs to transcribe")
-    parser.add_argument("--model", default="small",
+    parser.add_argument("--model", default="tiny.en",
                         choices=whisper.available_models(), help="name of the Whisper model to use")
     parser.add_argument("--format", default="vtt",
                         choices=["vtt", "srt"], help="the subtitle format to output")
@@ -51,7 +53,10 @@ def main():
         warnings.filterwarnings("default")
 
         if (subtitles_format == 'vtt'):
-            vtt_path = os.path.join(output_dir, f"{slugify(title)}.vtt")
+            parsed_url = urlparse(url[0])
+            query_string = parse_qs(parsed_url.query)
+            video_id = query_string["v"][0]
+            vtt_path = os.path.join(output_dir, f"{video_id}_{slugify(title)}.vtt")
             with open(vtt_path, 'w', encoding="utf-8") as vtt:
                 write_vtt(result["segments"], file=vtt, line_length=break_lines, vidURL=url, vidTitle=title )
 
