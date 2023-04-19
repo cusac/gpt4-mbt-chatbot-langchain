@@ -1,17 +1,18 @@
-import { spawn } from 'child_process';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync } from 'fs';
 //@ts-ignore
 import AWS from 'aws-sdk';
+import AWS_SSM from 'aws-sdk/clients/ssm';
 
 // import dotenv
 import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
-const EC2_KEY_PAIR = process.env.EC2_KEY_PAIR
-const EC2_REGION = process.env.EC2_REGION
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY
-const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY
+const EC2_KEY_PAIR = process.env.EC2_KEY_PAIR;
+const EC2_REGION = process.env.EC2_REGION;
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const AMI_ID = process.env.AMI_ID;
 
 if (!EC2_KEY_PAIR) {
   throw new Error('Missing EC2 Key Pair');
@@ -27,6 +28,9 @@ if (!AWS_ACCESS_KEY_ID) {
 }
 if (!AWS_SECRET_ACCESS_KEY) {
   throw new Error('Missing AWS Secret Access Key');
+}
+if (!AMI_ID) {
+  throw new Error('Missing AMI ID');
 }
 
 async function callYouTubeApi(
@@ -119,38 +123,86 @@ async function getChannelVideos(
   return { channelId, videoIds };
 }
 
-async function executeCommand(command: string, args: string[]): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    const childProcess = spawn(command, args);
+async function getInstanceOutput(ssm: AWS_SSM, commandId: string, instanceId: string) {
+  try {
+    const params = {
+      CommandId: commandId,
+      InstanceId: instanceId,
+    };
+    const result = await ssm.getCommandInvocation(params).promise();
 
-    childProcess.stdout.pipe(process.stdout);
-    childProcess.stderr.pipe(process.stderr);
+    if (result.Status === 'InProgress') {
+      setTimeout(() => getInstanceOutput(ssm, commandId, instanceId), 5000);
+    } else {
+      console.log(`Output for instance ${instanceId}:`);
+      console.log(result.StandardOutputContent);
+    }
+  } catch (error) {
+    console.error(`Failed to get command output for instance ${instanceId}: ${error}`);
+  }
+}
 
-    childProcess.on('error', (error: Error) => {
-      reject(error);
-    });
 
-    childProcess.on('exit', (code: number) => {
-      if (code !== 0) {
-        reject(new Error(`Command failed with code ${code}`));
+async function createEc2Instance(
+  ec2: AWS.EC2,
+  videoLink: string,
+  instanceParams: AWS.EC2.RunInstancesRequest,
+  attempt = 1,
+) {
+  ec2
+    .runInstances(instanceParams)
+    .promise()
+    .then((instance: any) => {
+      const instanceId = instance.Instances[0].InstanceId;
+      console.log(`Created EC2 instance with ID ${instanceId}`);
+
+      // Wait for the instance to finish and then terminate it
+      const waiter = new AWS.EC2({ region: EC2_REGION }).waitFor(
+        'instanceStatusOk',
+        {
+          InstanceIds: [instanceId],
+        },
+      );
+      waiter
+        .promise()
+        .then((resp: any) => {
+          console.log(resp);
+          console.log(
+            `Instance ${instanceId} is running and processing video: ${videoLink}`,
+          );
+        })
+        .catch((err: any) => {
+          console.log('ERROR WAITING FOR INSTANCE: ', err);
+        });
+    })
+    .catch(async (err: any) => {
+      if (err.code === 'RequestLimitExceeded' && attempt <= 5) {
+        const backoffTime = Math.pow(2, attempt) * 1000;
+        console.log(`Request limit exceeded. Retrying in ${backoffTime} ms...`);
+        await new Promise((resolve) => setTimeout(resolve, backoffTime));
+        createEc2Instance(ec2, videoLink, instanceParams, attempt + 1);
       } else {
-        resolve();
+        console.log('ERROR CREATING INSTANCE: ', err);
       }
     });
-  });
 }
 
 async function main() {
   const videoLink = 'https://www.youtube.com/watch?v=r9sN7v0QzGc';
 
   // Configure AWS SDK
-  AWS.config.update({ region: EC2_REGION }); // Set the region according to your preference
+  AWS.config.update({
+    region: EC2_REGION,
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+  }); // Set the region according to your preference
   const ec2 = new AWS.EC2();
   const s3 = new AWS.S3();
 
   // Upload Python scripts to S3
-  const scriptFiles = ['utils.py', 'cli.py'];
+  const scriptFiles = ['utils.py', 'cli.py', 'ec2_setup.sh'];
   for (const fileName of scriptFiles) {
+    console.log(`Uploading ${fileName} to S3...`);
     const fileContent = readFileSync(fileName);
     await s3
       .putObject({
@@ -171,11 +223,12 @@ async function main() {
       const transcriptObjects = await s3
         .listObjectsV2({
           Bucket: 'yt-whisper-transcripts',
-          Prefix: `transcripts/${videoId}`,
+          Prefix: `transcripts/${channelId}/${videoId}`,
         })
         .promise();
 
-      if (transcriptObjects.Contents.length > 0) {
+      //@ts-ignore
+      if (transcriptObjects?.Contents?.length > 0) {
         console.log(
           `Transcript for video ${videoId} already exists, skipping...`,
         );
@@ -191,35 +244,25 @@ async function main() {
       const base64UserData = Buffer.from(userData).toString('base64');
 
       const instanceParams = {
-        ImageId: 'ami-id', // Replace with the AMI ID that has all required dependencies
-        InstanceType: 't2.micro',
+        ImageId: AMI_ID, // Replace with your AMI ID
+        InstanceType: 't3.large',
+        KeyName: EC2_KEY_PAIR, // Replace with your key pair name
         MinCount: 1,
         MaxCount: 1,
-        KeyName: EC2_KEY_PAIR, // Replace with your key pair name
+        InstanceInitiatedShutdownBehavior: 'terminate',
         UserData: base64UserData,
+
+        // Add the following lines for Spot Instances
+        InstanceMarketOptions: {
+          MarketType: 'spot',
+          SpotOptions: {
+            MaxPrice: '0.10', // Maximum hourly price you're willing to pay for the instance
+            SpotInstanceType: 'one-time',
+          },
+        },
       };
 
-      ec2
-        .runInstances(instanceParams)
-        .promise()
-        .then((instance: any) => {
-          const instanceId = instance.Instances[0].InstanceId;
-          console.log(`Created EC2 instance with ID ${instanceId}`);
-
-          // Wait for the instance to finish and then terminate it
-          const waiter = new AWS.EC2({ region: EC2_REGION }).waitFor(
-            'instanceStatusOk',
-            {
-              InstanceIds: [instanceId],
-            },
-          );
-          waiter.promise().then((resp: any) => {
-            console.log(resp);
-            console.log(
-              `Instance ${instanceId} is running and processing video: ${videoLink}`,
-            );
-          });
-        });
+      createEc2Instance(ec2, videoLink, instanceParams);
     } catch (error) {
       console.error(`Failed to process video ${videoLink}: ${error}`);
     }
