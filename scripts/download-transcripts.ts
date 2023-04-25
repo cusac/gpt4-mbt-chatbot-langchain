@@ -120,10 +120,17 @@ async function getChannelVideos(
     nextPageToken = playlistItemsResponse.nextPageToken;
   } while (nextPageToken);
 
-  return { channelId, videoIds };
+  // return last 10 videos
+  return { channelId, videoIds: ['iLDST05OSTs'] };
+
+  // return { channelId, videoIds };
 }
 
-async function getInstanceOutput(ssm: AWS_SSM, commandId: string, instanceId: string) {
+async function getInstanceOutput(
+  ssm: AWS_SSM,
+  commandId: string,
+  instanceId: string,
+) {
   try {
     const params = {
       CommandId: commandId,
@@ -138,10 +145,11 @@ async function getInstanceOutput(ssm: AWS_SSM, commandId: string, instanceId: st
       console.log(result.StandardOutputContent);
     }
   } catch (error) {
-    console.error(`Failed to get command output for instance ${instanceId}: ${error}`);
+    console.error(
+      `Failed to get command output for instance ${instanceId}: ${error}`,
+    );
   }
 }
-
 
 async function createEc2Instance(
   ec2: AWS.EC2,
@@ -152,28 +160,43 @@ async function createEc2Instance(
   ec2
     .runInstances(instanceParams)
     .promise()
-    .then((instance: any) => {
+    .then(async (instance: any) => {
       const instanceId = instance.Instances[0].InstanceId;
       console.log(`Created EC2 instance with ID ${instanceId}`);
 
-      // Wait for the instance to finish and then terminate it
-      const waiter = new AWS.EC2({ region: EC2_REGION }).waitFor(
-        'instanceStatusOk',
-        {
+      // Wait for the instance to be in a 'running' state
+      await ec2
+        .waitFor('instanceStatusOk', {
           InstanceIds: [instanceId],
-        },
-      );
-      waiter
-        .promise()
-        .then((resp: any) => {
-          console.log(resp);
-          console.log(
-            `Instance ${instanceId} is running and processing video: ${videoLink}`,
-          );
         })
-        .catch((err: any) => {
-          console.log('ERROR WAITING FOR INSTANCE: ', err);
-        });
+        .promise();
+
+      // Add a small delay before sending the command
+      await new Promise((resolve) => setTimeout(resolve, 30000));
+
+      // Send the command using the AWS Systems Manager (SSM)
+      const ssm = new AWS_SSM({ region: EC2_REGION });
+      const commandParams = {
+        DocumentName: 'AWS-RunShellScript',
+        InstanceIds: [instanceId],
+        Parameters: {
+          commands: [
+            'aws s3 cp s3://yt-whisper-transcripts/ec2_setup.sh .',
+            'chmod +x ec2_setup.sh',
+            `./ec2_setup.sh "${videoLink}"`,
+          ],
+        },
+      };
+
+      const commandResult = await ssm.sendCommand(commandParams).promise();
+      const commandId = commandResult?.Command?.CommandId;
+
+      if (!commandId) {
+        console.log('ERROR: Unable to send command to instance');
+      } else {
+        // Get the command output
+        getInstanceOutput(ssm, commandId, instanceId);
+      }
     })
     .catch(async (err: any) => {
       if (err.code === 'RequestLimitExceeded' && attempt <= 5) {
@@ -188,7 +211,7 @@ async function createEc2Instance(
 }
 
 async function main() {
-  const videoLink = 'https://www.youtube.com/watch?v=r9sN7v0QzGc';
+  const videoLink = 'https://www.youtube.com/watch?v=iLDST05OSTs';
 
   // Configure AWS SDK
   AWS.config.update({
@@ -237,20 +260,24 @@ async function main() {
 
       // Create EC2 instance
       const userData = `#!/bin/bash
-  aws s3 cp s3://yt-whisper-transcripts/ec2_setup.sh .
-  chmod +x ec2_setup.sh
-  ./ec2_setup.sh "${videoLink}"
-  `;
-      const base64UserData = Buffer.from(userData).toString('base64');
+      aws s3 cp s3://yt-whisper-transcripts/ec2_setup.sh .
+      chmod +x ec2_setup.sh
+      ./ec2_setup.sh "${videoLink}"
+      `;
+          const base64UserData = Buffer.from(userData).toString('base64');
 
-      const instanceParams = {
+      const instanceParams: AWS.EC2.RunInstancesRequest = {
         ImageId: AMI_ID, // Replace with your AMI ID
-        InstanceType: 't3.large',
+        InstanceType: 't3.medium',
         KeyName: EC2_KEY_PAIR, // Replace with your key pair name
+        UserData: base64UserData,
+        SecurityGroupIds: ['sg-0337e03c7e0a7d65e'],
         MinCount: 1,
         MaxCount: 1,
         InstanceInitiatedShutdownBehavior: 'terminate',
-        UserData: base64UserData,
+        IamInstanceProfile: {
+          Arn: 'arn:aws:iam::005394478046:instance-profile/send-ssm-ec2',
+        },
 
         // Add the following lines for Spot Instances
         InstanceMarketOptions: {
@@ -263,6 +290,7 @@ async function main() {
       };
 
       createEc2Instance(ec2, videoLink, instanceParams);
+      return;
     } catch (error) {
       console.error(`Failed to process video ${videoLink}: ${error}`);
     }
