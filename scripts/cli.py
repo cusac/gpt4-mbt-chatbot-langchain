@@ -4,7 +4,7 @@ from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 import argparse
 import warnings
 import yt_dlp as youtube_dl
-from utils import slugify, str2bool, write_srt, write_vtt, youtube_dl_log
+from utils import slugify, str2bool, write_srt, write_vtt, youtube_dl_log, speaker_diarization
 import tempfile
 from urllib.parse import urlparse, parse_qs
 import time
@@ -51,6 +51,9 @@ def main():
 
     for title, audio_path in audios.items():
         warnings.filterwarnings("ignore")
+        print("Fetching speaker labels...")
+        speaker_segments = speaker_diarization(audio_path)
+        print("Transcribing...")
         result = model.transcribe(audio_path, **args)
         warnings.filterwarnings("default")
 
@@ -60,13 +63,13 @@ def main():
             video_id = query_string["v"][0]
             vtt_path = os.path.join(output_dir, f"{video_id}_{slugify(title)}.vtt")
             with open(vtt_path, 'w', encoding="utf-8") as vtt:
-                write_vtt(result["segments"], file=vtt, line_length=break_lines, vidURL=url, vidTitle=title )
+                write_vtt(result["segments"], speaker_segments, file=vtt, line_length=break_lines, vidURL=url, vidTitle=title )
 
             print("Saved VTT to", os.path.abspath(vtt_path))
         else:
             srt_path = os.path.join(output_dir, f"{slugify(title)}.srt")
             with open(srt_path, 'w', encoding="utf-8") as srt:
-                write_srt(result["segments"], file=srt, line_length=break_lines)
+                write_srt(result["segments"], speaker_segments, file=srt, line_length=break_lines)
 
             print("Saved SRT to", os.path.abspath(srt_path))
 

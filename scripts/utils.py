@@ -1,4 +1,32 @@
 from typing import Dict, Iterator, TextIO
+from pyannote.audio import Pipeline
+import yaml
+
+def speaker_diarization(audio_path: str):
+
+    YOUR_AUTH_TOKEN = "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"
+    
+    # diarization = diarization_pipeline({"audio": audio_path})
+    # diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization",
+    #                                 use_auth_token=YOUR_AUTH_TOKEN)
+    diarization_pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization", use_auth_token="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")
+    # diarization_pipeline = Pipeline.from_pretrained("hbredin/SpeakerDiarization", use_auth_token="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")
+    # diarization_pipeline = Pipeline.from_pretrained("philschmid/pyannote-speaker-diarization-endpoint", use_auth_token="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")
+    diarization = diarization_pipeline({"audio": audio_path})
+
+    speaker_segments = []
+
+    for segment, _, speaker in diarization.itertracks(yield_label=True):
+        speaker_segments.append({
+            'start': float(segment.start),
+            'end': float(segment.end),
+            'speaker': speaker
+        })
+
+    print(speaker_segments)
+
+    return speaker_segments
+
 
 
 def str2bool(string):
@@ -50,27 +78,38 @@ def process_segment(segment: dict, line_length: int = 0):
     
     return segment
 
-def write_vtt(transcript: Iterator[dict], file: TextIO, line_length: int = 0, vidURL = "", vidTitle = ""):
+def find_speaker_label(timestamp, speaker_segments):
+    for speaker_segment in speaker_segments:
+        start = float(speaker_segment['start'])
+        end = float(speaker_segment['end'])
+        speaker_label = speaker_segment['speaker']  # Use the existing speaker label directly
+        if start <= timestamp < end:
+            return speaker_label
+    return ""
+
+def write_vtt(transcript: Iterator[dict], speaker_segments, file: TextIO, line_length: int = 0, vidURL = "", vidTitle = ""):
     print(f"WEBVTT\n\nNOTE {vidURL} {vidTitle}\n", file = file)
     for segment in transcript:
         segment = process_segment(segment, line_length=line_length)
+        speaker_label = find_speaker_label(segment['start'], speaker_segments)
 
         print(
-            f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])}\n"
+            f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])} {speaker_label}\n"
             f"{segment['text'].strip().replace('-->', '->')}\n",
             file=file,
             flush=True,
         )
 
 
-def write_srt(transcript: Iterator[dict], file: TextIO, line_length: int = 0):
+def write_srt(transcript: Iterator[dict], speaker_segments, file: TextIO, line_length: int = 0):
     for i, segment in enumerate(transcript, start=1):
         segment = process_segment(segment, line_length=line_length)
+        speaker_label = find_speaker_label(segment['start'], speaker_segments)
 
         print(
             f"{i}\n"
             f"{format_timestamp(segment['start'], always_include_hours=True, decimal_marker=',')} --> "
-            f"{format_timestamp(segment['end'], always_include_hours=True, decimal_marker=',')}\n"
+            f"{format_timestamp(segment['end'], always_include_hours=True, decimal_marker=',')} {speaker_label}\n"
             f"{segment['text'].strip().replace('-->', '->')}\n",
             file=file,
             flush=True,
