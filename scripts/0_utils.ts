@@ -611,7 +611,6 @@ export const generateStandaloneChunk = async (
   }
 };
 
-// TODO: use chatgpt to generate a good example
 export const generateQuestion = async (
   conversationSummary: string,
   previousQA: TranscriptData[],
@@ -685,6 +684,112 @@ export const generateQuestion = async (
     throw error;
   }
 };
+
+export const generateAugmentedQa_1 = async (
+  qaPair: TranscriptData,
+  conversationSummary: string,
+) => {
+
+//   Example QA Pair:
+//     ---
+//     {{
+//       "questioner": "Alice, you mentioned earlier that a balanced diet combined with regular exercise can have a positive effect on one's health. Could you expand on what types of foods and exercises are most beneficial, and why?",
+//       "agent": "Certainly, Bob. A balanced diet includes plenty of fruits and vegetables, lean proteins, whole grains, and healthy fats. These foods provide essential nutrients that our bodies need to function properly. As for exercise, a combination of cardio workouts, strength training, and flexibility exercises tends to yield the best results for overall health."
+//     }}
+//     ---
+
+//     Modified QA Pair:
+//     ---
+//     {{
+//       "questioner": "Can you elaborate on the specific foods and exercises that provide the most health benefits?",
+//       "agent": "Sure thing! Consuming a diet rich in fruits, vegetables, lean proteins, whole grains, and beneficial fats ensures that our bodies receive vital nutrients for optimal functioning. In terms of exercise, an effective routine typically includes cardio workouts, strength training, and exercises to enhance flexibility. These contribute significantly to improving our overall health."
+//     }}
+// ---
+      
+  
+  const QA_PROMPT =
+    PromptTemplate.fromTemplate(`Given the following conversation summary and QA pair:
+
+    1) Rephrase the "questioner" portion to be more concise and coherent while maintaining the same questions/statements as the original questioner portion.
+    2) Rephrase the "agent" portion to fix any grammatical errors while maintaining the style, meaning, length, and word choice of the original agent portion as closely as possible.
+
+    IMPORTANT: The agent portion should be slightly longer than the original agent portion. Use unique metaphors, analogies, and examples to expand on the original agent portion.
+
+    Example Conversation Summary:
+    ---
+    Tom Campbell, a guest on Alpha Casts, presented his My Big Toe theory, which aims to unify science and philosophy by providing a scientifically derived explanation for the nature of reality. The theory combines a fundamental understanding of consciousness and virtual reality to explain many of the big questions in both fields. One of the key aspects of the theory is that it eliminates quantum weirdness and builds a scientific foundation under much of what was previously deemed paranormal. By understanding the nature of consciousness and its relationship to the physical world, we can gain a deeper understanding of the world around us and our place in it.
+
+    During the interview, Tom was asked about how exploring our own consciousness can lead to a deeper understanding of the world around us, and what practices or methods can be used to do so. Tom explained that exploring inner space takes time and dedication, but it can lead to profound insights and a deeper understanding of ourselves and the world around us. He noted that people from thousands of years ago seemed to have a good understanding of the nature of reality and how the world worked. There are many different paths and practices that people have used to explore their own consciousness, from meditation to psychedelics to lucid dreaming. The key is to find a practice that resonates with you and to make a commitment to exploring your own consciousness. By doing so, you can gain a deeper understanding of the world around you and your place in it. And as you gain insights and information, it's important to share that knowledge with others, so that we can all benefit from the journey of exploring inner space.
+    
+    Tom was also asked about the importance of reinterpreting ancient wisdom in modern terms. He emphasized the importance of using metaphors and vocabulary that are relevant to our time. By restating ancient wisdom in our own language, we can make it accessible to everyone and help them gain a deeper understanding of the world around them. It's like translating a foreign language into something that we can all understand. By doing so, we can all benefit from the wisdom of the ages and use it to navigate our own lives and reality.
+    
+    Tom expressed his excitement to share his journey with the audience and was honored to be a part of the show. His My Big Toe theory offers a unique perspective on the nature of reality and consciousness, and he hopes that it can help people gain a deeper understanding of themselves and the world around them.
+    ---
+
+    Example QA Pair:
+    ---
+    {{
+        "questioner": "On today's podcast, we're discussing the integration of the Western and Eastern hemispheres of the Earth and the potential for new consciousness exploration. The consciousness music festival scene has been a great platform for people to connect and play with their consciousness. Tom, do you believe we are moving into an era of new consciousness exploration and are you still pushing the boundaries of your own exploration into your consciousness?",
+        "agent": "Yes and yes. Those are the short answers. But let me elaborate a little bit, please do. We humanity, we human beings, we've been around as homo sapiens for about 200,000 years. And in that time, the purpose that we've had here all this time is to evolve the quality of our consciousness. And that means become love, cooperate, care, make it about other, not just about self. This is our goal, this is our purpose. And we've been working on that consciousness evolution, becoming love for 200,000 years as a species. And we haven't made a whole lot of progress. We've made some progress. If you look, the world is a much kinder, gentler, nicer place now than it was, say 500 years ago or 1000 years ago. In general. If you look at most people, most of the time, life is a lot better. We've made progress. But one of the interesting things is about evolution is that the more you change or the more you evolve, the easier it is to evolve more. As you evolve, your system becomes more capable, more flexible, more complex. And as it does that, its ability to grow increases. Then also the potential for that growth becomes greater. So, I think we are moving into an era of new consciousness exploration. And I think that's because we're at a point now where we have enough people who have evolved enough that they can help others evolve. And that's what it's all about. It's about helping others evolve. As for me, I'm still pushing the boundaries of my own exploration into my consciousness. I'm always learning, always growing, always evolving. And I think that's what we all should be doing."
+    }}
+    ---
+
+    Modified QA Pair:
+    ---
+    {{
+        "questioner": "We're diving into the integration of Eastern and Western ideas in terms of consciousness exploration in today's chat. The consciousness music festivals are an excellent venue for people to connect and explore their consciousness. Do you think we're entering a new phase of consciousness exploration, Tom? And are you continuing to expand your own consciousness?",
+        "agent": "Indeed, I believe so. To elaborate a bit, humans have existed as Homo Sapiens for roughly 200,000 years, and our purpose throughout this time has been to elevate the quality of our consciousness, primarily focusing on love, cooperation, and empathy. We've made significant progress, and the world is undeniably a more compassionate place now than it was a few centuries ago. As we evolve, our capacity to grow and adapt increases, thus accelerating our potential for further evolution. Therefore, I believe we are stepping into a new era of consciousness exploration, fostered by a growing number of evolved individuals who can guide others on this journey. As for my personal journey, I am indeed continually pushing my consciousness boundaries, always learning and evolving. That's the lifelong endeavor I believe we should all undertake."
+    }}
+    ---
+
+    Conversation Summary:
+    ---
+    {conversationSummary}
+    ---
+
+    QA Pair:
+    ---
+    {qaPair}
+    ---
+
+    Modified QA Pair:
+  `);
+
+  try {
+    let maxTokens = 1500;
+    let tokenReduction = 0.1
+    const testPrompt = await QA_PROMPT.format({
+      conversationSummary,
+      qaPair: JSON.stringify(qaPair, null, 4),
+    });
+    console.log('TEST AUGMENTED QA PROMPT: \n\n', testPrompt, '\n\n\n');
+    while (true) {
+      try {
+        const response = await callChain(QA_PROMPT, maxTokens, {
+          conversationSummary,
+          qaPair: JSON.stringify(qaPair, null, 4),
+        });
+        return response.text;
+      } catch (error: any) {
+        if (error?.response?.data?.error?.code === 'context_length_exceeded') {
+          console.log(`CONTENT LENGTH EXCEEDED, REDUCING MAX TOKENS BY ${tokenReduction * 100}%: `, maxTokens)
+          maxTokens = Math.floor(maxTokens * (1 - tokenReduction))
+          tokenReduction = tokenReduction * 1.5
+        } else {
+          throw error
+        }
+      }
+    }
+
+  } catch (error: any) {
+    console.error('Error generating augmented qa.');
+    if (error.response) {
+      console.log('ERROR RESPONSE:', error.response.data);
+    }
+    throw error
+  }
+};
+
 
 type SpeakerPercentages = { [key: string]: number };
 
