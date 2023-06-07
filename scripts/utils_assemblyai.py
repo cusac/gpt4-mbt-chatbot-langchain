@@ -50,20 +50,10 @@ def process_segment(segment: dict, line_length: int = 0):
     
     return segment
 
-def write_vtt(transcript: Iterator[dict], file: TextIO, line_length: int = 0, vidURL = "", vidTitle = ""):
-    print(f"WEBVTT\n\nNOTE {vidURL} {vidTitle}\n", file = file)
+def write_transcript(transcript: Iterator[dict], file: TextIO):
+    # print(f"WEBVTT\n\nNOTE {vidURL} {vidTitle}\n", file = file)
     for segment in transcript:
         print(
-            f"{segment['text'].strip().replace('-->', '->')}\n",
-            file=file,
-            flush=True,
-        )
-
-
-def write_srt(transcript: Iterator[dict], file: TextIO, line_length: int = 0):
-    for i, segment in enumerate(transcript, start=1):
-        print(
-            f"{i}\n"
             f"{segment['text'].strip().replace('-->', '->')}\n",
             file=file,
             flush=True,

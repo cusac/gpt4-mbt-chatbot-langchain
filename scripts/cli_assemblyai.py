@@ -4,14 +4,18 @@ from whisper.tokenizer import LANGUAGES, TO_LANGUAGE_CODE
 import argparse
 import warnings
 import yt_dlp as youtube_dl
-from utils_assemblyai import slugify, str2bool, write_srt, write_vtt, youtube_dl_log
+from utils_assemblyai import slugify, str2bool, write_transcript, youtube_dl_log
 import tempfile
 from urllib.parse import urlparse, parse_qs
 import time
 import requests
 import json
+from dotenv import load_dotenv
 
-# API_KEY = "your_assemblyai_api_key"
+
+load_dotenv()  # take environment variables from .env.
+API_KEY = os.getenv("API_KEY")  # Replace with your AssemblyAI API key.
+
 
 def main():
     start_time = time.time()
@@ -21,10 +25,8 @@ def main():
                         help="video URLs to transcribe")
     parser.add_argument("--model", default="tiny.en",
                         choices=whisper.available_models(), help="name of the Whisper model to use")
-    parser.add_argument("--format", default="vtt",
-                        choices=["vtt", "srt"], help="the subtitle format to output")
     parser.add_argument("--output_dir", "-o", type=str,
-                        default=".", help="directory to save the outputs")
+                        default="./1_labeled_transcripts", help="directory to save the outputs")
     parser.add_argument("--verbose", type=str2bool, default=False,
                         help="Whether to print out the progress and debug messages")
     parser.add_argument("--task", type=str, default="transcribe", choices=[
@@ -41,7 +43,6 @@ def main():
     duration_limit = args.pop("duration_limit")
     model_name: str = args.pop("model")
     output_dir: str = args.pop("output_dir")
-    subtitles_format: str = args.pop("format")
     os.makedirs(output_dir, exist_ok=True)
 
     if model_name.endswith(".en"):
@@ -49,36 +50,52 @@ def main():
             f"{model_name} is an English-only model, forcing English detection.")
         args["language"] = "en"
 
-    model = whisper.load_model(model_name)
-    url = args.pop("video")
-    audios = get_audio(url, duration_limit)
+    # model = whisper.load_model(model_name)
+    # url = args.pop("video")
+    # audios = get_audio(url, duration_limit)
     break_lines = args.pop("break_lines")
 
-    for title, audio_path in audios.items():
-        warnings.filterwarnings("ignore")
-        # result = model.transcribe(audio_path, **args)
-        result = transcribe_assemblyai(audio_path) # AssemblyAI
-        warnings.filterwarnings("default")
+    ydl = youtube_dl.YoutubeDL({'quiet': True, 'no_warnings': True})
+    
+    for url in args["video"]:
+        info_dict = ydl.extract_info(url, download=False)
+        title = info_dict.get('title', None)
+        
+        file_exists, output_path = check_output_file_exists(url, output_dir, info_dict)
 
-        if (subtitles_format == 'vtt'):
-            parsed_url = urlparse(url[0])
-            query_string = parse_qs(parsed_url.query)
-            video_id = query_string["v"][0]
-            vtt_path = os.path.join(output_dir, f"{video_id}_{slugify(title)}.vtt")
-            with open(vtt_path, 'w', encoding="utf-8") as vtt:
-                write_vtt(result["segments"], file=vtt, line_length=break_lines, vidURL=url, vidTitle=title )
+        if file_exists:
+            continue
 
-            print("Saved VTT to", os.path.abspath(vtt_path))
-        else:
-            srt_path = os.path.join(output_dir, f"{slugify(title)}.srt")
-            with open(srt_path, 'w', encoding="utf-8") as srt:
-                write_srt(result["segments"], file=srt, line_length=break_lines)
+        # Download and transcribe the video if the output file doesn't exist
+        audios = get_audio([url], duration_limit)
+        
+        for title, audio_path in audios.items():
+            warnings.filterwarnings("ignore")
+            # result = model.transcribe(audio_path, **args)
+            result = transcribe_assemblyai(audio_path)  # AssemblyAI
+            warnings.filterwarnings("default")
 
-            print("Saved SRT to", os.path.abspath(srt_path))
+            with open(output_path, 'w', encoding="utf-8") as transcript_file:
+                write_transcript(result["segments"], file=transcript_file, line_length=break_lines, vidURL=url, vidTitle=title )
+
+            print("Saved transcript to", os.path.abspath(output_path))
 
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"The script took {elapsed_time:.2f} seconds to complete.")
+
+def check_output_file_exists(url, output_dir, info_dict):
+    title = info_dict.get('title', None)
+    parsed_url = urlparse(url)
+    query_string = parse_qs(parsed_url.query)
+    video_id = query_string.get("v", [None])[0]
+    output_path = os.path.join(output_dir, f"{video_id}_{slugify(title)}.txt")
+
+    if os.path.isfile(output_path):
+        print(f"Output file {output_path} already exists. Skipping this video...")
+        return True, output_path
+    return False, output_path
+
 
 
 def transcribe_assemblyai(audio_path):
@@ -127,7 +144,7 @@ def format_transcript(transcription_result):
     segment = {
         "start": words[0]['start'],
         "end": words[0]['end'],
-        "text": f"SPEAKER {current_speaker}\n\n{words[0]['text']} "
+        "text": f"SPEAKER_{current_speaker}\n\n{words[0]['text']} "
     }
 
     for word in words[1:]:
@@ -137,7 +154,7 @@ def format_transcript(transcription_result):
             segment = {
                 "start": word['start'],
                 "end": word['end'],
-                "text": f"\n\nSPEAKER {current_speaker}\n\n{word['text']} "
+                "text": f"\n\nSPEAKER_{current_speaker}\n\n{word['text']} "
             }
         else:
             segment["end"] = word['end']
