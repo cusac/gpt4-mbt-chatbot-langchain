@@ -168,7 +168,7 @@ export const run = async () => {
     // Login to MBT and get video ids needing whisper update
     await Promise.all([loginToMbt(), getVideoIdsNeedingWhisperUpdate()]);
     // Create an absolute path to the relative path of "docs/With Timestamps"
-    const inputDirectoryPath = path.join(process.cwd(), 'docs/With Timestamps');
+    const inputDirectoryPath = path.join(process.cwd(), 'docs/With Timestamps2');
     console.log('DOCS PATH', inputDirectoryPath);
     await processAllDocxFiles(inputDirectoryPath);
   } catch (error) {

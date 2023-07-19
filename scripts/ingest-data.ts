@@ -9,7 +9,7 @@ import { DirectoryLoader } from 'langchain/document_loaders';
 import { DocxLoader } from 'langchain/document_loaders/fs/docx';
 
 /* Name of directory to retrieve your files from */
-const filePath = 'docs';
+const filePath = 'docs/With Timestamps';
 
 export const run = async () => {
   try {
@@ -24,8 +24,8 @@ export const run = async () => {
 
     /* Split text into chunks */
     const textSplitter = new RecursiveCharacterTextSplitter({
-      chunkSize: 1000,
-      chunkOverlap: 200,
+      chunkSize: 3500,
+      chunkOverlap: 500,
     });
 
     const docs = await textSplitter.splitDocuments(rawDocs);

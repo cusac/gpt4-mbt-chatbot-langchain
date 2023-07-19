@@ -101,26 +101,40 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
   for (const chunk of text) {
     console.log('CHUNK:', chunk, '\n\n');
 
-    // Using the given speaker descriptions, please pay close attention to each speaker's speech pattern, pronunciation and accent, tone and pitch, speaking tempo, pauses and hesitations, grammatical structures and errors, context and content, and any other available information. With these details in mind, verify the correctness of the labels in the provided labeled transcript portion. If the portion contains two speakers but is labeled as one, correct the labels accordingly. If the portion is labeled with the wrong speaker, update the label. Please avoid introducing new content or incorrectly splitting a portion when it is actually a single speaker. The final output should be a corrected labeled transcript portion if any errors are found, otherwise, return the original portion.
 
-    // When providing the corrected labeled transcript portion, please make sure to:
+    // Please analyze the given speaker descriptions and the labeled transcript portion. Determine if the labels in the transcript portion are correct or incorrect based on the speaker descriptions. If the labels are incorrect, provide the corrected labeled transcript portion with proper formatting, separating different speakers with a blank line and using the speaker labels followed by two colons (::) before the speaker's text. Do not introduce new content or split the portion if it is actually a single speaker. If the labels are correct, simply return the original transcript portion.
 
-    // 1. Separate different speakers with a blank line.
-    // 2. Use the speaker labels followed by two colons (::) before the speaker's text.
 
     const LABEL_PROMPT = PromptTemplate.fromTemplate(`
-    Please analyze the given speaker descriptions and the labeled transcript portion. Determine if the labels in the transcript portion are correct or incorrect based on the speaker descriptions. If the labels are incorrect, provide the corrected labeled transcript portion with proper formatting, separating different speakers with a blank line and using the speaker labels followed by two colons (::) before the speaker's text. Do not introduce new content or split the portion if it is actually a single speaker. If the labels are correct, simply return the original transcript portion.
+    Using the given speaker descriptions, please analyze the speaker characteristics in the provided labeled transcript portion. Compare the characteristics detected in the transcript portion to the provided speaker descriptions. Pay close attention to each speaker's speech pattern, pronunciation and accent, tone and pitch, speaking tempo, pauses and hesitations, grammatical structures and errors, context and content, and any other available information. With these details in mind, verify the correctness of the labels in the provided labeled transcript portion. If the portion contains two speakers but is labeled as one, correct the labels accordingly. If the portion is labeled with the wrong speaker, update the label. Please avoid introducing new content or incorrectly splitting a portion when it is actually a single speaker. If there is no content for a speaker, do not include any label for that speaker. Do not include any additional notes or comments in the output.
 
+    The final output should be a report of the speaker characteristics detected in this portion and how they compare to the provided speaker descriptions, followed by the corrected labeled transcript portion if any errors are found, otherwise, return the original portion.
+
+    If a particular portion has consistent characterizations throughout, make sure to verify that the labels are correct for the entire portion. If the portion has inconsistent characterizations, please make sure to verify that the labels are correct for each speaker's portion.
+
+    When providing the corrected labeled transcript portion, please make sure to:
+
+    1. Separate different speakers with a blank line.
+    2. Use the speaker labels followed by two colons (::) before the speaker's text.
+
+    ALWAYS return either the original or corrected transcript portion.
 
     Speaker descriptions:
-    
+    ---
     {speaker_descriptions}
-    
+    ---
+
     Labeled transcript portion:
-    
+    ---
     {transcript_chunk}
-    
-    Corrected labeled transcript portion ONLY:
+    ---
+
+    The output should follow the EXACT format:
+
+    --- SPEAKER CHARACTERISTICS DETECTED IN THIS PORTION AND THEIR COMPARISON TO THE PROVIDED DESCRIPTIONS ---
+    <report of speaker characteristics detected in the transcript portion and how they compare to the provided speaker descriptions>
+    --- CORRECTED OR ORIGINAL LABELED TRANSCRIPT PORTION ---
+    <corrected labeled transcript portion OR the original portion if no errors were detected>
     `)
 
     // const LABEL_PROMPT =
@@ -241,7 +255,8 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
   // console.log("LABLED CHUNKS:\n\n", allLabeledChunks, '\n\n\n')
   // console.log("REVISED LABLED CHUNKS:\n\n", fixIncorrectLabels(combineOverlappingLabels(allLabeledChunks.join('\n\n'))), '\n\n\n')
 
-  return fixIncorrectLabels(combineOverlappingLabels(allLabeledChunks.join('\n\n')));
+  // return fixIncorrectLabels(combineOverlappingLabels(allLabeledChunks.join('\n\n')));
+  return allLabeledChunks
 };
 
 
@@ -333,7 +348,7 @@ const fixIncorrectLabels = (transcript: string) => {
 };
 
 
-const splitTranscriptPortion = (transcriptPortion: string, tokenThreshold = 1000): string[] => {
+const splitTranscriptPortion = (transcriptPortion: string, tokenThreshold = 750): string[] => {
   const speaker = transcriptPortion.match(/^(.+?)::/)?.[1] || '';
   const content = transcriptPortion.slice(speaker.length + 2).trim();
 

@@ -2,95 +2,75 @@ import * as mammoth from 'mammoth';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { OpenAI } from 'langchain/llms/openai';
-import { LLMChain } from 'langchain/chains';
 import { PromptTemplate } from 'langchain/prompts';
-import { countAllTokens } from './count-tokens';
+import { callChain, splitTextIntoChunks, getGlobalTokenCount } from './0_utils';
 
 // Function that removes all characters before the first '['
-const removeTextBeforeFirstBracket = (text: string) => {
-  const firstBracketIndex = text.indexOf('[');
-  if (firstBracketIndex === -1) {
-    return text;
-  }
-  return text.substring(firstBracketIndex);
-};
+// const removeTextBeforeFirstBracket = (text: string) => {
+//   const firstBracketIndex = text.indexOf('[');
+//   if (firstBracketIndex === -1) {
+//     return text;
+//   }
+//   return text.substring(firstBracketIndex);
+// };
 
-const parsePartialJson = (input: string) => {
-  let jsonString = input;
-  console.log('TEXT:', jsonString);
-  let stack = [];
+// const parsePartialJson = (input: string) => {
+//   let jsonString = input;
+//   console.log('TEXT:', jsonString);
+//   let stack = [];
 
-  for (let i = 0; i < jsonString.length; i++) {
-    const char = jsonString[i];
+//   for (let i = 0; i < jsonString.length; i++) {
+//     const char = jsonString[i];
 
-    if (char === '[' || char === '{') {
-      stack.push(char);
-    } else if (char === '}' || char === ']') {
-      const lastInStack = stack.pop();
+//     if (char === '[' || char === '{') {
+//       stack.push(char);
+//     } else if (char === '}' || char === ']') {
+//       const lastInStack = stack.pop();
 
-      if (
-        (char === '}' && lastInStack !== '{') ||
-        (char === ']' && lastInStack !== '[')
-      ) {
-        jsonString = jsonString.slice(0, i);
-        break;
-      }
-    }
-  }
+//       if (
+//         (char === '}' && lastInStack !== '{') ||
+//         (char === ']' && lastInStack !== '[')
+//       ) {
+//         jsonString = jsonString.slice(0, i);
+//         break;
+//       }
+//     }
+//   }
 
-  while (stack.length > 0) {
-    const popped = stack.pop();
-    if (popped === '{') {
-      const lastOpeningBrace = jsonString.lastIndexOf('{');
-      jsonString = jsonString.slice(0, lastOpeningBrace);
-    } else {
-      jsonString += ']';
-    }
-  }
+//   while (stack.length > 0) {
+//     const popped = stack.pop();
+//     if (popped === '{') {
+//       const lastOpeningBrace = jsonString.lastIndexOf('{');
+//       jsonString = jsonString.slice(0, lastOpeningBrace);
+//     } else {
+//       jsonString += ']';
+//     }
+//   }
 
-  // Remove trailing comma
-  const regex = /,\s*([}\]])/g;
-  jsonString = jsonString.replace(regex, '$1');
+//   // Remove trailing comma
+//   const regex = /,\s*([}\]])/g;
+//   jsonString = jsonString.replace(regex, '$1');
 
-  // Delete all text after the last closing bracket
-  const lastClosingBracket = jsonString.lastIndexOf('}');
-  jsonString = jsonString.slice(0, lastClosingBracket + 1);
+//   // Delete all text after the last closing bracket
+//   const lastClosingBracket = jsonString.lastIndexOf('}');
+//   jsonString = jsonString.slice(0, lastClosingBracket + 1);
 
-  try {
-    // console.log('JSON:', jsonString);
-    const jsonObject = JSON.parse(jsonString);
-    return jsonObject;
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
-    return null;
-  }
-};
+//   try {
+//     // console.log('JSON:', jsonString);
+//     const jsonObject = JSON.parse(jsonString);
+//     return jsonObject;
+//   } catch (error) {
+//     console.error('Error parsing JSON:', error);
+//     return null;
+//   }
+// };
 
-const splitTextIntoChunks = (
+const generateLabeledTranscriptPortions = async (
+  speaker_descriptions: any,
   text: string,
-  maxChars: number,
-  overlap: number,
+  overlap = 500,
 ) => {
-  let chunks = [];
-  let index = 0;
-
-  while (index < text.length) {
-    let endIndex = index + maxChars;
-
-    chunks.push(text.slice(index, endIndex));
-
-    if (endIndex < text.length) {
-      endIndex -= overlap; // Adjust the endIndex to include the overlap
-    }
-    index = endIndex;
-  }
-
-  return chunks;
-};
-
-const generateLabeledTranscript = async (speaker_descriptions: any, text: string, overlap = 500) => {
-  const maxChars = 5000; // Adjust this value based on the model's token limit
+  const maxChars = 3500; // Adjust this value based on the model's token limit
   const textChunks = splitTextIntoChunks(text, maxChars, overlap);
 
   let allLabeledChunks: any[] = [];
@@ -141,6 +121,10 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
       ---
       
       Please focus on EXTRACTING and LABELING the FIRST FEW WORDS of each speaker's speech ONLY.
+
+      IMPORTANT: A speaker should NOT be labeled twice in a row such as:
+      Tom:: I'm doing well, thanks for asking.
+      Tom:: How are you doing Sally? <-- INCORRECT, Tom was labeled twice in a row
       
       Speaker Descriptions:
       {speaker_descriptions}
@@ -148,14 +132,6 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
       Transcript Portion:
       {transcript_chunk}
     `);
-
-    const labelChain = new LLMChain({
-      llm: new OpenAI(
-        { temperature: 0, maxTokens: 1500, modelName: 'gpt-3.5-turbo' },
-        { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
-      ),
-      prompt: LABEL_PROMPT,
-    });
 
     const prompt_example = await LABEL_PROMPT.format({
       transcript_chunk: 'test_transcripts',
@@ -165,23 +141,12 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
     console.log('PROMPT example:', prompt_example);
 
     try {
-      console.log(
-        'INPUT TOKENS:',
-        countAllTokens(LABEL_PROMPT, chunk, speaker_descriptions),
-      );
-      const response = await labelChain.call({
+      const response = await callChain(LABEL_PROMPT, 1500, {
         transcript_chunk: chunk,
         speaker_descriptions,
       });
 
       const labeledChunk = response.text;
-
-      console.log('OUTPUT TOKENS:', countAllTokens(labeledChunk));
-
-      console.log(
-        'TOTAL TOKENS:',
-        countAllTokens(LABEL_PROMPT, chunk, speaker_descriptions, labeledChunk),
-      );
 
       console.log('Labeled chunk:', labeledChunk);
 
@@ -202,7 +167,7 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
     } catch (error) {
       console.error('Error generating labeled transcripts:', error);
       //@ts-ignore
-      console.error('Error details: ', error?.data?.error);
+      console.error('Error details: ', error?.response?.data?.error);
       return null;
     }
 
@@ -230,33 +195,43 @@ async function processDocxFile(inputDocxPath: string) {
 
     // Extract filename from inputDocxPath, and use it as the output filename plus _qa.json. Save in "qa" directory
     const labelFilename =
-      path.basename(inputDocxPath, '.docx') + '__transcript_labels.json';
+      path.basename(inputDocxPath, '.docx') +
+      '__revised_transcript_labels.json';
     const labelDirectoryPath = path.join(
       process.cwd(),
-      'scripts/transcript_labels',
+      'scripts/3_revised_transcript_labels',
     );
     const labelFilePath = path.join(labelDirectoryPath, labelFilename);
 
     const labelData = await fs.readFile(labelFilePath, 'utf8');
     const labelJson = JSON.parse(labelData);
     // Grab the last element of the array, which is the most recent label
-    const labelDescriptions = JSON.stringify(labelJson[labelJson.length - 1], null, 4);
+    const labelDescriptions = JSON.stringify(
+      labelJson[labelJson.length - 1],
+      null,
+      4,
+    );
 
     const outputFilename =
       path.basename(inputDocxPath, '.docx') + '__labeled_chunks.json';
     const outputDirectoryPath = path.join(
       process.cwd(),
-      'scripts/labeled_chunks',
+      'scripts/4_labeled_chunks',
     );
     const outputFilePath = path.join(outputDirectoryPath, outputFilename);
 
-    await generateLabeledTranscript(labelDescriptions, text).then((allLabledChunks) => {
-      // get current workding directory with path
+    await generateLabeledTranscriptPortions(labelDescriptions, text).then(
+      (allLabledChunks) => {
+        // get current workding directory with path
 
-      if (allLabledChunks) {
-        fs.writeFile(outputFilePath, JSON.stringify(allLabledChunks, null, 2));
-      }
-    });
+        if (allLabledChunks) {
+          fs.writeFile(
+            outputFilePath,
+            JSON.stringify(allLabledChunks, null, 2),
+          );
+        }
+      },
+    );
   } catch (error) {
     console.error('Error processing .docx file:', error);
   }
@@ -273,7 +248,7 @@ async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
     let docsCount = 0;
 
     for (const docxFile of docxFiles) {
-      if (docsCount < 3) {
+      if (docsCount < 4) {
         docsCount++;
         continue;
       }
@@ -303,8 +278,14 @@ export const run = async () => {
 };
 
 (async () => {
+  const startTime = Date.now();
   console.log('process.cwd()', process.cwd());
   await run();
+
+  const endTime = Date.now();
+
+  console.log('Total token usage:', getGlobalTokenCount());
+  console.log('Total time: ', (endTime - startTime) / 1000, 'seconds');
 
   console.log('extraction complete');
 })();

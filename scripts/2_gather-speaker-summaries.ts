@@ -16,6 +16,9 @@ import {
   replaceKeysWithClosestMatch,
   compareJson,
   checkScores,
+  detectDuplicateSpeakers,
+  mergeSpeakers,
+  concatenateConsecutiveSpeakerTexts,
 } from './0_utils';
 
 const generateSpeakerSummaries = async (text: string) => {

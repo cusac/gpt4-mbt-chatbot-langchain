@@ -2,92 +2,6 @@ import * as mammoth from 'mammoth';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
-import { OpenAI } from 'langchain/llms/openai';
-import { LLMChain } from 'langchain/chains';
-import { PromptTemplate } from 'langchain/prompts';
-import { countAllTokens } from './count-tokens';
-
-// Function that removes all characters before the first '['
-const removeTextBeforeFirstBracket = (text: string) => {
-  const firstBracketIndex = text.indexOf('[');
-  if (firstBracketIndex === -1) {
-    return text;
-  }
-  return text.substring(firstBracketIndex);
-};
-
-const parsePartialJson = (input: string) => {
-  let jsonString = input;
-  console.log('TEXT:', jsonString);
-  let stack = [];
-
-  for (let i = 0; i < jsonString.length; i++) {
-    const char = jsonString[i];
-
-    if (char === '[' || char === '{') {
-      stack.push(char);
-    } else if (char === '}' || char === ']') {
-      const lastInStack = stack.pop();
-
-      if (
-        (char === '}' && lastInStack !== '{') ||
-        (char === ']' && lastInStack !== '[')
-      ) {
-        jsonString = jsonString.slice(0, i);
-        break;
-      }
-    }
-  }
-
-  while (stack.length > 0) {
-    const popped = stack.pop();
-    if (popped === '{') {
-      const lastOpeningBrace = jsonString.lastIndexOf('{');
-      jsonString = jsonString.slice(0, lastOpeningBrace);
-    } else {
-      jsonString += ']';
-    }
-  }
-
-  // Remove trailing comma
-  const regex = /,\s*([}\]])/g;
-  jsonString = jsonString.replace(regex, '$1');
-
-  // Delete all text after the last closing bracket
-  const lastClosingBracket = jsonString.lastIndexOf('}');
-  jsonString = jsonString.slice(0, lastClosingBracket + 1);
-
-  try {
-    // console.log('JSON:', jsonString);
-    const jsonObject = JSON.parse(jsonString);
-    return jsonObject;
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
-    return null;
-  }
-};
-
-const splitTextIntoChunks = (
-  text: string,
-  maxChars: number,
-  overlap: number,
-) => {
-  let chunks = [];
-  let index = 0;
-
-  while (index < text.length) {
-    let endIndex = index + maxChars;
-
-    chunks.push(text.slice(index, endIndex));
-
-    if (endIndex < text.length) {
-      endIndex -= overlap; // Adjust the endIndex to include the overlap
-    }
-    index = endIndex;
-  }
-
-  return chunks;
-};
 
 const generateLabeledTranscript = async (labels: any, transcript: string) => {
   // Delete the first line of the transcript
@@ -303,7 +217,7 @@ async function processDocxFile(inputDocxPath: string) {
       path.basename(inputDocxPath, '.docx') + '__labeled_chunks.json';
     const labelDirectoryPath = path.join(
       process.cwd(),
-      'scripts/labeled_chunks',
+      'scripts/4_labeled_chunks',
     );
     const labelFilePath = path.join(labelDirectoryPath, labelFilename);
 
@@ -316,13 +230,15 @@ async function processDocxFile(inputDocxPath: string) {
       path.basename(inputDocxPath, '.docx') + '__labeled_transcript.json';
     const outputDirectoryPath = path.join(
       process.cwd(),
-      'scripts/labeled_transcripts',
+      'scripts/5_labeled_transcripts',
     );
     const outputFilePath = path.join(outputDirectoryPath, outputFilename);
 
     await generateLabeledTranscript(labeledChunks, text).then(
       (labeledTranscript) => {
         // get current workding directory with path
+
+        console.log("LABELED TRANSCRIPT: '\n\n", labeledTranscript, '\n\n')
 
         if (labeledTranscript) {
           fs.writeFile(
@@ -348,7 +264,7 @@ async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
     let docsCount = 0;
 
     for (const docxFile of docxFiles) {
-      if (docsCount < 3) {
+      if (docsCount < 4) {
         docsCount++;
         continue;
       }
@@ -378,8 +294,13 @@ export const run = async () => {
 };
 
 (async () => {
+  const startTime = Date.now();
   console.log('process.cwd()', process.cwd());
   await run();
+
+  const endTime = Date.now();
+
+  console.log('Total time: ', (endTime - startTime) / 1000, 'seconds');
 
   console.log('extraction complete');
 })();

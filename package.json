@@ -17,6 +17,7 @@
     "format": "prettier --ignore-path .gitignore \"**/*.+(ts|js|tsx)\" --write",
     "ingest": "tsx -r dotenv/config scripts/ingest-data.ts",
     "sync-whisper-names": "tsx -r dotenv/config scripts/sync-whisper-names.ts",
+    "test-gpt": "tsx -r dotenv/config scripts/_test_gpt.ts",
     "process-transcripts": "tsx -r dotenv/config scripts/process-transcripts.ts",
     "name-labels": "tsx -r dotenv/config scripts/4_name-labels.ts",
     "gather-speaker-summaries": "tsx -r dotenv/config scripts/2_gather-speaker-summaries.ts",
@@ -24,7 +25,10 @@
     "revise-transcript-labels": "tsx -r dotenv/config scripts/4_revise-transcript-labels.ts",
     "label-transcript-portions": "tsx -r dotenv/config scripts/5_label-transcript-portions.ts",
     "label-transcripts": "tsx -r dotenv/config scripts/5_label-transcripts.ts",
+    "clean-labeled-transcript": "tsx -r dotenv/config scripts/1_z_2_clean-labeled-transcript.ts",
     "generate-qa": "tsx -r dotenv/config scripts/5_generate-qa.ts",
+    "augment-qa": "tsx -r dotenv/config scripts/6_augment-qa.ts",
+    "generate-training-data": "tsx -r dotenv/config scripts/7_generate-training-data.ts",
     "summarize-transcripts": "tsx -r dotenv/config scripts/6_summarize_transcripts.ts",
     "revise-labeled-transcripts": "tsx -r dotenv/config scripts/99_revise-labeled-transcripts.ts",
     "merge-transcripts": "tsx -r dotenv/config scripts/00_merge-transcripts.ts"

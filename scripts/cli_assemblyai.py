@@ -38,11 +38,14 @@ def main():
                         help="Whether to break lines into a bottom-heavy pyramid shape if line length exceeds N characters. 0 disables line breaking.")
     parser.add_argument("--duration_limit", type=int, default=None,
                         help="Limit the duration of the audio file in seconds (default: no limit)")
+    parser.add_argument("--number_of_speakers", type=int, default=None,
+                        help="Specify the number of speakers in the audio file (default: no limit)")
 
     args = parser.parse_args().__dict__
     duration_limit = args.pop("duration_limit")
     model_name: str = args.pop("model")
     output_dir: str = args.pop("output_dir")
+    speakers_expected: int = args.pop("number_of_speakers")
     os.makedirs(output_dir, exist_ok=True)
 
     if model_name.endswith(".en"):
@@ -72,11 +75,11 @@ def main():
         for title, audio_path in audios.items():
             warnings.filterwarnings("ignore")
             # result = model.transcribe(audio_path, **args)
-            result = transcribe_assemblyai(audio_path)  # AssemblyAI
+            result = transcribe_assemblyai(audio_path, speakers_expected)  # AssemblyAI
             warnings.filterwarnings("default")
 
             with open(output_path, 'w', encoding="utf-8") as transcript_file:
-                write_transcript(result["segments"], file=transcript_file, line_length=break_lines, vidURL=url, vidTitle=title )
+                write_transcript(result["segments"], file=transcript_file)
 
             print("Saved transcript to", os.path.abspath(output_path))
 
@@ -98,7 +101,7 @@ def check_output_file_exists(url, output_dir, info_dict):
 
 
 
-def transcribe_assemblyai(audio_path):
+def transcribe_assemblyai(audio_path, speakers_expected=None):
     base_url = "https://api.assemblyai.com/v2"
 
     headers = {
@@ -114,7 +117,8 @@ def transcribe_assemblyai(audio_path):
 
     data = {
         "audio_url": upload_url,
-        "speaker_labels": True
+        "speaker_labels": True,
+        "speakers_expected": speakers_expected
     }
 
     url = base_url + "/transcript"

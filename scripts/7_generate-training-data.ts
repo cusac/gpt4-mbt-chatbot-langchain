@@ -23,6 +23,7 @@ import {
 } from './0_utils';
 
 let globalTokenCount = 0;
+let qaLimit = 5;
 
 type TrainingData = {
   prompt: string;
@@ -41,17 +42,13 @@ const contstructTrainingData = (
 
   let tokenSize = 0;
   let tokenLimit = 2500;
-  let qaLimit = 5;
   let pair = qaPairs[endIndex];
   let startIndex = endIndex;
   let dataDummy: any[] = [conversationSummary];
 
   console.log('DATA END INDEX:', endIndex);
 
-  while (
-    startIndex > 0 &&
-    endIndex - startIndex < qaLimit
-  ) {
+  while (startIndex > 0 && endIndex - startIndex < qaLimit) {
     dataDummy.push(pair);
     tokenSize = countAllTokens(dataDummy, qaPairs[endIndex - 1]);
     console.log('Token Size:', tokenSize);
@@ -94,6 +91,8 @@ const generateTrainingData = async (
   let summaries = [];
   let index = trainingData.length;
 
+  console.log('INDEX:', index);
+
   try {
     conversationSummary = await fs.readFile(conversationPath, 'utf8');
     summaries = JSON.parse(conversationSummary);
@@ -106,6 +105,10 @@ const generateTrainingData = async (
   }
 
   const agentName = agent.slice(3, agent.length - 3);
+
+  if (index === 0) {
+    conversationSummary = 'None. This is the beginning of the conversation.';
+  }
 
   while (index < qaPairs.length) {
     console.log('SET INDEX:', index);
@@ -139,9 +142,9 @@ const generateTrainingData = async (
       );
     }
 
-    console.log('CONVERSATION SUMMARY:', conversationSummary);
-    console.log('nextData:', nextData);
-    console.log('Training Set:', trainingData);
+    // console.log('CONVERSATION SUMMARY:', conversationSummary);
+    // console.log('nextData:', nextData);
+    // console.log('Training Set:', trainingData);
 
     fs.writeFile(outputPath, JSON.stringify(trainingData, null, 4), 'utf8');
 
@@ -154,10 +157,9 @@ type SpeakerContent = {
   [speaker: string]: string;
 };
 
-async function processDocxFile(inputDocxPath: string) {
+async function processFile(inputPath: string) {
   try {
-    // Extract filename from inputDocxPath, and use it as the output filename plus _qa.json. Save in "qa" directory
-    const qaFileName = path.basename(inputDocxPath, '.docx') + '__qa.json';
+    const qaFileName = path.basename(inputPath, '.txt') + '__qa.json';
     const qaDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
     const qaFilePath = path.join(qaDirectoryPath, qaFileName);
 
@@ -182,7 +184,8 @@ async function processDocxFile(inputDocxPath: string) {
     }
 
     const outputFilename =
-      path.basename(inputDocxPath, '.docx') + '__training_data_standard.json';
+      path.basename(inputPath, '.txt') +
+      `__training_data_standard_qa_${qaLimit}.json`;
     const outputDirectoryPath = path.join(
       process.cwd(),
       'scripts/7_training-data',
@@ -190,9 +193,9 @@ async function processDocxFile(inputDocxPath: string) {
     const outputFilePath = path.join(outputDirectoryPath, outputFilename);
 
     const conversationFilename =
-      path.basename(inputDocxPath, '.docx') + '__qa_summary.txt';
+      path.basename(inputPath, '.txt') + '__qa_summary.txt';
     const conversatiotDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
-    const conversatioFilePath = path.join(
+    const conversationFilePath = path.join(
       conversatiotDirectoryPath,
       conversationFilename,
     );
@@ -235,35 +238,31 @@ async function processDocxFile(inputDocxPath: string) {
       qaPairs,
       trainingData,
       agentName,
-      conversatioFilePath,
+      conversationFilePath,
       outputFilePath,
     );
 
     fs.writeFile(outputFilePath, JSON.stringify(trainingData, null, 4));
   } catch (error) {
-    console.error('Error processing .docx file:', error);
+    console.error('Error processing file:', error);
   }
 }
 
-async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
+async function processAllFiles(inputDirectoryPath: string): Promise<void> {
   try {
     const files = await fs.readdir(inputDirectoryPath);
-    const docxFiles = files.filter(
-      (file: string) => path.extname(file) === '.docx',
-    );
 
     // Skip the first 3 files
     let docsCount = 0;
 
-    for (const docxFile of docxFiles) {
-      if (docsCount < 4) {
-        docsCount++;
-        continue;
-      }
-      const inputDocxPath = path.join(inputDirectoryPath, docxFile);
+    for (const file of files) {
+      // if (docsCount < 4) {
+      //   docsCount++;
+      //   continue;
+      // }
+      const inputPath = path.join(inputDirectoryPath, file);
 
-      await processDocxFile(inputDocxPath);
-      return;
+      await processFile(inputPath);
     }
   } catch (error) {
     console.error('Error reading directory:', error);
@@ -275,10 +274,10 @@ export const run = async () => {
     // Create an absolute path to the relative path of "docs/Without Timestamps"
     const inputDirectoryPath = path.join(
       process.cwd(),
-      'docs/Without Timestamps',
+      'scripts/1_labeled_transcripts',
     );
     console.log('DOCS PATH', inputDirectoryPath);
-    await processAllDocxFiles(inputDirectoryPath);
+    await processAllFiles(inputDirectoryPath);
   } catch (error) {
     console.log('error', error);
     throw new Error('Failed to extract links');

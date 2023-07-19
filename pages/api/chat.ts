@@ -21,7 +21,7 @@ export default async function handler(
 
   /* create vectorstore*/
   const vectorStore = await PineconeStore.fromExistingIndex(
-    new OpenAIEmbeddings({ maxConcurrency: 5 }),
+    new OpenAIEmbeddings({ maxConcurrency: 5, organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' }),
     {
       pineconeIndex: index,
       textKey: 'text',

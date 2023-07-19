@@ -89,11 +89,9 @@ type SpeakerContent = {
   [speaker: string]: string;
 };
 
-async function processDocxFile(inputDocxPath: string) {
+async function processFile(inputPath: string) {
   try {
-
-    // Extract filename from inputDocxPath, and use it as the output filename plus _qa.json. Save in "qa" directory
-    const qaFileName = path.basename(inputDocxPath, '.docx') + '__qa.json';
+    const qaFileName = path.basename(inputPath, '.txt') + '__qa.json';
     const qaDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
     const qaFilePath = path.join(qaDirectoryPath, qaFileName);
 
@@ -119,7 +117,7 @@ async function processDocxFile(inputDocxPath: string) {
     }
 
     const outputFilename =
-      path.basename(inputDocxPath, '.docx') + '__qa_augmented.json';
+      path.basename(inputPath, '.txt') + '__qa_augmented.json';
     const outputDirectoryPath = path.join(
       process.cwd(),
       'scripts/6_qa_augmented',
@@ -127,7 +125,7 @@ async function processDocxFile(inputDocxPath: string) {
     const outputFilePath = path.join(outputDirectoryPath, outputFilename);
 
     const conversationFilename =
-      path.basename(inputDocxPath, '.docx') + '__qa_augmented_summary.txt';
+      path.basename(inputPath, '.txt') + '__qa_augmented_summary.txt';
     const conversatiotDirectoryPath = path.join(
       process.cwd(),
       'scripts/6_qa_augmented',
@@ -173,29 +171,25 @@ async function processDocxFile(inputDocxPath: string) {
 
     fs.writeFile(outputFilePath, JSON.stringify(augmentedQaPairs, null, 4));
   } catch (error) {
-    console.error('Error processing .docx file:', error);
+    console.error('Error processing file:', error);
   }
 }
 
-async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
+async function processAllFiles(inputDirectoryPath: string): Promise<void> {
   try {
     const files = await fs.readdir(inputDirectoryPath);
-    const docxFiles = files.filter(
-      (file: string) => path.extname(file) === '.docx',
-    );
 
     // Skip the first 3 files
     let docsCount = 0;
 
-    for (const docxFile of docxFiles) {
-      if (docsCount < 4) {
-        docsCount++;
-        continue;
-      }
-      const inputDocxPath = path.join(inputDirectoryPath, docxFile);
+    for (const file of files) {
+      // if (docsCount < 4) {
+      //   docsCount++;
+      //   continue;
+      // }
+      const inputPath = path.join(inputDirectoryPath, file);
 
-      await processDocxFile(inputDocxPath);
-      return;
+      await processFile(inputPath);
     }
   } catch (error) {
     console.error('Error reading directory:', error);
@@ -204,13 +198,12 @@ async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
 
 export const run = async () => {
   try {
-    // Create an absolute path to the relative path of "docs/Without Timestamps"
     const inputDirectoryPath = path.join(
       process.cwd(),
-      'docs/Without Timestamps',
+      'scripts/1_labeled_transcripts',
     );
     console.log('DOCS PATH', inputDirectoryPath);
-    await processAllDocxFiles(inputDirectoryPath);
+    await processAllFiles(inputDirectoryPath);
   } catch (error) {
     console.log('error', error);
     throw new Error('Failed to extract links');

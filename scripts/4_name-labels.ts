@@ -11,7 +11,8 @@ import {
   getLabeledSegmentsAndLabelsSplit,
   parsePartialJson,
   findMaxKey,
-  calculateSpeakerPercentages
+  calculateSpeakerPercentages,
+  detectDuplicateSpeakers
 } from './0_utils';
 
 const agentNames = 'Tom Campbell';
@@ -335,6 +336,9 @@ async function processDocxFile(inputTextPath: string) {
     console.log('INPUT TEXT PATH:', inputTextPath);
 
     let text = await fs.readFile(inputTextPath, 'utf8');
+
+
+    
 
     // console.log("ORIGINAL TEXT:", text)
 

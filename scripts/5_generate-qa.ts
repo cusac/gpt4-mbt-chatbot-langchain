@@ -13,104 +13,162 @@ import {
   splitTranscript,
   processQA,
   generateSummaryFromQA,
-  TranscriptData
+  TranscriptData,
+  limitTokens,
 } from './0_utils';
 
-const generateQA = async (transcript: string, agent: string) => {
+const generateQA = async (
+  transcript: string,
+  agent: string,
+  index: number,
+  qaPairs: TranscriptData[],
+  conversationPath: string,
+  outputPath: string,
+  indexFilePath: string,
+) => {
+  const qaPairsRaw = extractQAPairs(agent, transcript);
 
-  const qaPairsRaw = extractQAPairs(agent, transcript)
-  let qaPairs: TranscriptData[] = []
-  let conversationSummary = "None. This is the beginning of the conversation."
-
-  const agentName = agent.slice(3, agent.length - 3)
-
-  for (const pair of qaPairsRaw) {
-    const { qaPairs: latestQaPairs, conversationSummary: updatedConversationSummary } = await processQA(pair, agentName, conversationSummary, 1500, 1100)
-    conversationSummary = updatedConversationSummary
-    console.log("CONVERSATION SUMMARY:", conversationSummary)
-    console.log("PAIR:", pair)
-    console.log("GENERATED QA:", latestQaPairs)
-    qaPairs = qaPairs.concat(latestQaPairs)
-    console.log("QA PAIRS:", qaPairs)
-
-    // conversationSummary = await generateSummaryFromQA(conversationSummary, latestQaPairs, agentName)
+  if (qaPairsRaw.length === 0) {
+    console.error('\nNo QA pairs found.\n\n');
+    return [];
   }
 
-  return qaPairs
+  let conversationSummary = 'None. This is the beginning of the conversation.';
+  let summaries: string[] = [];
+
+  try {
+    conversationSummary = await fs.readFile(conversationPath, 'utf8');
+    summaries = JSON.parse(conversationSummary);
+    conversationSummary = summaries[summaries.length - 1];
+  } catch (err) {
+    console.error('Error reading conversation summary file:', err);
+    if (index > 0) {
+      throw err;
+    }
+  }
+
+  const agentName = agent.slice(3, agent.length - 3);
+
+  while (index < qaPairsRaw.length) {
+    console.log('SET INDEX:', index);
+    const pair = qaPairsRaw[index];
+    const { qaPairs: latestQaPairs, summaries: latestSummaries } =
+      await processQA(pair, agentName, conversationSummary, 1500, 1500);
+
+    // conversationSummary = updatedConversationSummary
+    // console.log("CONVERSATION SUMMARY:", conversationSummary)
+    qaPairs = qaPairs.concat(latestQaPairs);
+    summaries = summaries.concat(latestSummaries);
+
+    console.log('CONVERSATION SUMMARY:', latestSummaries);
+    console.log('PAIR:', pair);
+    console.log('GENERATED QA:', latestQaPairs);
+    console.log('QA PAIRS:', qaPairs);
+
+    fs.writeFile(conversationPath, JSON.stringify(summaries, null, 4), 'utf8');
+
+    fs.writeFile(outputPath, JSON.stringify(qaPairs, null, 4), 'utf8');
+
+    index += 1;
+
+    fs.writeFile(indexFilePath, index.toString(), 'utf8');
+  }
+
+  fs.writeFile(indexFilePath, 'DONE', 'utf8');
+
+  // for (const pair of qaPairsRaw) {
+  //   const { qaPairs: latestQaPairs, conversationSummary: updatedConversationSummary } = await processQA(pair, agentName, conversationSummary, 1500, 1100)
+  //   conversationSummary = updatedConversationSummary
+  //   console.log("CONVERSATION SUMMARY:", conversationSummary)
+  //   console.log("PAIR:", pair)
+  //   console.log("GENERATED QA:", latestQaPairs)
+  //   qaPairs = qaPairs.concat(latestQaPairs)
+  //   console.log("QA PAIRS:", qaPairs)
+
+  //   // conversationSummary = await generateSummaryFromQA(conversationSummary, latestQaPairs, agentName)
+  // }
+
+  return qaPairs;
 };
 
-async function processDocxFile(inputDocxPath: string) {
+async function processFile(inputPath: string) {
   try {
-    let { value: text } = await mammoth.convertToHtml({
-      path: inputDocxPath,
-    });
-
-    // First replace all instances of </p><p> with a newline
-    // Then replace all instances of <p> and </p> with nothing
-    // Then replace all instances of <br> with a newline
-
-    text = text.replace(/<\/p><p>/g, '\n');
-    text = text.replace(/<p>/g, '');
-
-    //print first 10 lines of text
-    // console.log("TEXT:", text.split('\n').slice(0, 10).join('\n'));
-
-    // Extract filename from inputDocxPath, and use it as the output filename plus _qa.json. Save in "qa" directory
-    const labelFilename =
-      path.basename(inputDocxPath, '.docx') + '__named_transcript.txt';
-    const labelDirectoryPath = path.join(
+    const namedTranscriptFilename =
+      path.basename(inputPath, '.txt') + '__named_transcript.txt';
+    const namedTranscriptDirectoryPath = path.join(
       process.cwd(),
       'scripts/4_named_transcripts',
     );
-    const labelFilePath = path.join(labelDirectoryPath, labelFilename);
+    const namedTranscriptFilePath = path.join(
+      namedTranscriptDirectoryPath,
+      namedTranscriptFilename,
+    );
 
-    text = await fs.readFile(labelFilePath, 'utf8');
+    let text = await fs.readFile(namedTranscriptFilePath, 'utf8');
 
     let agentDescription;
 
     try {
       const agentDescriptionFilename = 'agent_description.json';
-      const agentDescriptionDirectoryPath = path.join(
-        process.cwd(),
-        'scripts',
+      const agentDescriptionDirectoryPath = path.join(process.cwd(), 'scripts');
+      const agentDescriptionFilePath = path.join(
+        agentDescriptionDirectoryPath,
+        agentDescriptionFilename,
       );
-      const agentDescriptionFilePath = path.join(agentDescriptionDirectoryPath, agentDescriptionFilename);
 
       agentDescription = await fs.readFile(agentDescriptionFilePath, 'utf8');
       agentDescription = JSON.parse(agentDescription);
-
     } catch (err) {
       console.error('Error reading agent description file:', err);
     }
 
-    const outputFilename =
-      path.basename(inputDocxPath, '.docx') + '__qa.json';
-    const outputDirectoryPath = path.join(
-      process.cwd(),
-      'scripts/5_qa',
-    );
+    const outputFilename = path.basename(inputPath, '.txt') + '__qa.json';
+    const outputDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
     const outputFilePath = path.join(outputDirectoryPath, outputFilename);
 
-    let processed = true;
+    const conversationFilename =
+      path.basename(inputPath, '.txt') + '__qa_summary.txt';
+    const conversatiotDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
+    const conversationFilePath = path.join(
+      conversatiotDirectoryPath,
+      conversationFilename,
+    );
+
+    const indexFilename =
+      path.basename(inputPath, '.txt') + '__qa_raw_index.txt';
+    const indexDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
+    const indexFilePath = path.join(indexDirectoryPath, indexFilename);
+
+    let index = 0;
+
     try {
-      await fs.stat(outputFilePath);
-    } catch (err) {
-      processed = false;
-    }
+      let indexString = await fs.readFile(indexFilePath, 'utf8');
 
-    console.log('PROCESSED:', processed);
+      if (indexString === 'DONE') {
+        console.log('\nFile already processed:', outputFilePath);
+        return;
+      }
 
-    // Check if the file has already been processed
-    if (processed) {
-      console.log('File already processed:', outputFilePath);
-      return;
+      index = parseInt(indexString, 10);
+    } catch (err) {}
+
+    let qaPairs: TranscriptData[] = [];
+    // Support resuming processing of a file
+
+    if (index > 0) {
+      try {
+        let qaPairsText = await fs.readFile(outputFilePath, 'utf8');
+        qaPairs = JSON.parse(qaPairsText);
+      } catch (err) {
+        throw "Couldn't read qa pairs file.";
+      }
     }
 
     let agentName = Object.keys(agentDescription)[0];
 
-    agentName = `XXX${agentName}XXX`
+    agentName = `XXX${agentName}XXX`;
 
-    console.log("AGENT NAME:", agentName)
+    console.log('AGENT NAME:', agentName);
 
     // console.log("TEXT:", text)
 
@@ -119,35 +177,39 @@ async function processDocxFile(inputDocxPath: string) {
       return;
     }
 
-    const qaPairs = await generateQA(text, agentName)
-
+    qaPairs = await generateQA(
+      text,
+      agentName,
+      index,
+      qaPairs,
+      conversationFilePath,
+      outputFilePath,
+      indexFilePath,
+    );
 
     fs.writeFile(outputFilePath, JSON.stringify(qaPairs, null, 4));
-
   } catch (error) {
-    console.error('Error processing .docx file:', error);
+    console.error('Error processing file:', error);
   }
 }
 
-async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
+async function processAllFiles(inputDirectoryPath: string): Promise<void> {
   try {
     const files = await fs.readdir(inputDirectoryPath);
-    const docxFiles = files.filter(
-      (file: string) => path.extname(file) === '.docx',
-    );
 
     // Skip the first 3 files
     let docsCount = 0;
 
-    for (const docxFile of docxFiles) {
-      if (docsCount < 4) {
-        docsCount++;
-        continue;
-      }
-      const inputDocxPath = path.join(inputDirectoryPath, docxFile);
+    for (const file of files) {
+      // if (docsCount < 4) {
+      //   docsCount++;
+      //   continue;
+      // }
+      const inputPath = path.join(inputDirectoryPath, file);
 
-      await processDocxFile(inputDocxPath);
-      return;
+      console.log('\nPROCESSING FILE:', inputPath);
+
+      await processFile(inputPath);
     }
   } catch (error) {
     console.error('Error reading directory:', error);
@@ -156,13 +218,12 @@ async function processAllDocxFiles(inputDirectoryPath: string): Promise<void> {
 
 export const run = async () => {
   try {
-    // Create an absolute path to the relative path of "docs/Without Timestamps"
     const inputDirectoryPath = path.join(
       process.cwd(),
-      'docs/Without Timestamps',
+      'scripts/1_labeled_transcripts',
     );
     console.log('DOCS PATH', inputDirectoryPath);
-    await processAllDocxFiles(inputDirectoryPath);
+    await processAllFiles(inputDirectoryPath);
   } catch (error) {
     console.log('error', error);
     throw new Error('Failed to extract links');

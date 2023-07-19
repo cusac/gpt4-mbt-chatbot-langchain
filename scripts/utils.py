@@ -87,18 +87,39 @@ def find_speaker_label(timestamp, speaker_segments):
             return speaker_label
     return ""
 
-def write_vtt(transcript: Iterator[dict], speaker_segments, file: TextIO, line_length: int = 0, vidURL = "", vidTitle = ""):
-    print(f"WEBVTT\n\nNOTE {vidURL} {vidTitle}\n", file = file)
-    for segment in transcript:
-        segment = process_segment(segment, line_length=line_length)
-        speaker_label = find_speaker_label(segment['start'], speaker_segments)
+# def write_vtt(transcript: Iterator[dict], speaker_segments, file: TextIO, line_length: int = 0, vidURL = "", vidTitle = ""):
+#     print(f"WEBVTT\n\nNOTE {vidURL} {vidTitle}\n", file = file)
+#     for segment in transcript:
+#         segment = process_segment(segment, line_length=line_length)
+#         speaker_label = find_speaker_label(segment['start'], speaker_segments)
 
-        print(
-            f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])} {speaker_label}\n"
-            f"{segment['text'].strip().replace('-->', '->')}\n",
-            file=file,
-            flush=True,
-        )
+#         print(
+#             f"{format_timestamp(segment['start'])} --> {format_timestamp(segment['end'])} {speaker_label}\n"
+#             f"{segment['text'].strip().replace('-->', '->')}\n",
+#             file=file,
+#             flush=True,
+#         )
+
+def write_vtt(transcript: Iterator[dict], file: TextIO, line_length: int = 0, vidURL="", vidTitle=""):
+    print(f"WEBVTT\n\nNOTE {vidURL} {vidTitle}\n", file=file)
+
+    current_speaker = None
+    current_line = []
+
+    for segment in transcript:
+        if current_speaker != segment['speaker_tag']:
+            if current_speaker is not None:
+                print('\n'.join(current_line), file=file, flush=True)
+                current_line = []
+
+            current_speaker = segment['speaker_tag']
+            print(f"\nSPEAKER {current_speaker}\n", file=file, flush=True)
+
+        current_line.append(segment['text'])
+
+    if current_line:
+        print('\n'.join(current_line), file=file, flush=True)
+
 
 
 def write_srt(transcript: Iterator[dict], speaker_segments, file: TextIO, line_length: int = 0):
