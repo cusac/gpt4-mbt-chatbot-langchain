@@ -5,11 +5,11 @@
 #     SystemMessage
 # )
 
-# chat = ChatOpenAI(openai_api_key="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", openai_organization="org-0lR0mqZeR2oqqwVbRyeMhmrC", temperature=0)
+# chat = ChatOpenAI(openai_api_key="DONT COMMMIT THE KEY", openai_organization="org-0lR0mqZeR2oqqwVbRyeMhmrC", temperature=0)
 # chat.predict_messages([HumanMessage(content="Translate this sentence from English to French. I love programming.")])
 # >> AIMessage(content="J'aime programmer.", additional_kwargs={})
 
-# llm = OpenAI(openai_api_key="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", openai_organization="org-0lR0mqZeR2oqqwVbRyeMhmrC", temperature=0.9)
+# llm = OpenAI(openai_api_key="DONT COMMMIT THE KEY", openai_organization="org-0lR0mqZeR2oqqwVbRyeMhmrC", temperature=0.9)
 
 # response = llm.predict("What would be a good company name for a company that makes colorful socks?")
 
