@@ -19,12 +19,14 @@ export default function Home() {
   const [query, setQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [evaluatingSources, setEvaluatingSources] = useState<boolean>(false);
+  const [fetchingSummary, setFetchingSummary] = useState<boolean>(false);
   const [sourceDocs, setSourceDocs] = useState<Document[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [messageState, setMessageState] = useState<{
     messages: Message[];
     pending?: string;
     history: [string, string][];
+    chatSummary: string;
     pendingSourceDocs?: Document[];
   }>({
     messages: [
@@ -36,10 +38,12 @@ export default function Home() {
       },
     ],
     history: [],
+    chatSummary: 'None. This is the beginning of the conversation.',
     pendingSourceDocs: [],
   });
 
-  const { messages, pending, history, pendingSourceDocs } = messageState;
+  const { messages, pending, history, chatSummary, pendingSourceDocs } =
+    messageState;
 
   const messageListRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -67,7 +71,7 @@ export default function Home() {
       console.log('fetchEval');
       const source_docs = apiMessage.sourceDocs || [];
 
-      console.log('SOURCE DOCS:', source_docs.length);
+      // console.log('SOURCE DOCS:', source_docs.length);
 
       setMessageState((state) => ({
         ...state,
@@ -110,18 +114,6 @@ export default function Home() {
 
         // let { source_scores } = JSON.parse(response.data);
         let { source_scores } = data;
-        // console.log('SOURCE SCORES BEFORE: ', source_scores);
-        // // source_scores = JSON.parse(source_scores)
-        // if (source_scores?.length > 0) {
-        //   source_scores = source_scores.map((s: string) => JSON.parse(s));
-        //   source_scores = source_scores.map((s: any, i: number) => {
-        //     s.id = createHashId(source_docs[i].pageContent);
-        //     console.log('ID CREATED: ', s.id);
-        //     return s;
-        //   });
-        // } else {
-        //   return;
-        // }
         console.log('SOURCE SCORES AFTER:', source_scores);
 
         console.log('STATE MESSAGES:', messageState);
@@ -160,6 +152,44 @@ export default function Home() {
     }
   };
 
+
+  const fetchSummary = async (historyForSummary, currentSummary) => {
+
+    try {
+      console.log("SUMMARY:", currentSummary)
+        setFetchingSummary(true);
+        const response = await fetch('/api/generate_summary', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            currentSummary,
+            history: historyForSummary,
+          }),
+        });
+
+        console.log('SUMMARY RESPONSE:', response);
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const { newSummary } = await response.json();
+        
+        console.log("SUMMARY RESPONSE DATA: ", newSummary)
+
+        setMessageState((state) => ({
+          ...state,
+          chatSummary: newSummary.text
+        }))
+      } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
+      } finally {
+        setFetchingSummary(false);
+      }
+  };
+
   useEffect(() => {
     for (const [index, message] of messageState.messages.entries()) {
       if (
@@ -171,6 +201,32 @@ export default function Home() {
           messageState.messages[index + 1],
         );
       }
+    }
+
+    if (messageState.history.length > 2) {
+      // grab all but the two most recent history entries
+      const historyForSummary = messageState.history.slice(
+        0,
+        messageState.history.length - 2,
+      );
+
+      // now grab the last two history entries
+      const lastTwoHistoryEntries = messageState.history.slice(
+        messageState.history.length - 2,
+        messageState.history.length,
+      );
+
+      console.log('HISTORY FOR SUMMARY:', historyForSummary);
+
+      // set the message state with the last two history messages
+      setMessageState((state) => ({
+        ...state,
+        history: lastTwoHistoryEntries,
+      }));
+
+      console.log("MESSAGE STATE:", messageState)
+
+      fetchSummary(historyForSummary, messageState.chatSummary);
     }
   }, [messageState]);
 
@@ -207,7 +263,10 @@ export default function Home() {
 
     const ctrl = new AbortController();
 
+    const history = messageState.history;
+
     try {
+      console.log('STATE HISTORY:', history);
       fetchEventSource('/api/chat', {
         method: 'POST',
         headers: {
@@ -219,22 +278,27 @@ export default function Home() {
         }),
         signal: ctrl.signal,
         onmessage: (event: any) => {
+          // console.log("EVENT:", event)
           if (event.data === '[DONE]') {
-            setMessageState((state) => ({
-              history: [...state.history, [question, state.pending ?? '']],
-              messages: [
-                ...state.messages,
-                {
-                  type: 'apiMessage',
-                  message: state.pending ?? '',
-                  sourceDocs: state.pendingSourceDocs,
-                  sourcesEvaluated: false,
-                  sourcesEvaluationPending: false,
-                },
-              ],
-              pending: undefined,
-              pendingSourceDocs: undefined,
-            }));
+            console.log("event.data === '[DONE]'", event.data, question);
+            setMessageState((state) => {
+              return {
+                ...state,
+                history: [...state.history, [question, state.pending ?? '']],
+                messages: [
+                  ...state.messages,
+                  {
+                    type: 'apiMessage',
+                    message: state.pending ?? '',
+                    sourceDocs: state.pendingSourceDocs,
+                    sourcesEvaluated: false,
+                    sourcesEvaluationPending: false,
+                  },
+                ],
+                pending: undefined,
+                pendingSourceDocs: undefined,
+              };
+            });
             setLoading(false);
             ctrl.abort();
           } else {
@@ -444,7 +508,7 @@ export default function Home() {
                     disabled={loading || evaluatingSources}
                     className={styles.generatebutton}
                   >
-                    {(loading || evaluatingSources) ? (
+                    {loading || evaluatingSources ? (
                       <div className={styles.loadingwheel}>
                         <LoadingDots color="#000" />
                       </div>

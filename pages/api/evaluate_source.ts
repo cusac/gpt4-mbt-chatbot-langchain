@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
-import { evalQuestionChain, makeChain } from '@/utils/makechain';
+import { evalQuestionChain, makeChain, formatDocs } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
 import * as fs from 'fs';
@@ -153,7 +153,7 @@ export default async function handler(
     source_docs = await Promise.all(
       source_docs.map(async (doc: SourceDoc, index: number) => {
         const { first, last } = extractFirstAndLastTimestamps(doc.pageContent);
-        doc.metadata.startTs = first || undefined;
+        doc.metadata.startTs = first || 0;
         doc.metadata.endTs = last || undefined;
         const ytLink = await getYTLinkByDocName(doc.metadata.source);
         if (!ytLink) {
@@ -163,11 +163,12 @@ export default async function handler(
           const ytLinkWithTimestamp = ytLink + `&t=${first}`;
           doc.metadata.ytLink = ytLinkWithTimestamp;
         }
+        doc.pageContent = formatDocs(doc.pageContent)
         return doc;
       }),
     );
 
-    console.log('SOURCE DOCS', source_docs);
+    // console.log('SOURCE DOCS', source_docs);
 
     const evalPromises = source_docs.map((doc: any, index: number) =>
       chain.call({
@@ -178,7 +179,7 @@ export default async function handler(
       }),
     );
 
-    const mbtSegmentPromises = source_docs.map((doc: any, index: number) => {
+    const mbtSegmentPromises = source_docs.map(async (doc: any, index: number) => {
       // Get youtube video id from link
       const videoId = extractVideoId(doc.metadata.ytLink);
 
@@ -187,11 +188,15 @@ export default async function handler(
         return null
       }
 
-      console.log('FETCHING SEGMENTS BASED ON DOC:', doc);
+      // console.log('FETCHING SEGMENTS BASED ON DOC:', doc);
 
       const url = `${process.env.MBT_API_URL}/video/segments/timestamp-range?videoId=${videoId}&start=${doc.metadata.startTs}&end=${doc.metadata.endTs}`;
-      console.log('URL', url);
-      return fetch(url).then((response) => response.json());
+      // console.log('URL', url);
+      const response = await fetch(url)
+      // console.log("RANGE RESPONSE:", response)
+      const responseJson = await response.json()
+      // console.log("RESPONSE JSON:", responseJson)
+      return responseJson
     });
 
     let mbtSegments: MBTSegmentInfo[] = [];
@@ -207,10 +212,26 @@ export default async function handler(
       throw err;
     }
 
+    // console.log("mbtSegments:", mbtSegments)
+    // console.log("sourceScoresText:", sourceScoresText)
+
     // Flatten mbtSegments
     mbtSegments = mbtSegments.flat();
 
-    let source_scores = sourceScoresText.map((r) => JSON.parse(r.text));
+    let source_scores = sourceScoresText.map((r) => {
+      // console.log("R:", r.text)
+      let data: any
+      try {
+        data = JSON.parse(r.text)
+      } catch(err) {
+        console.log("There was an error parsing the source score text:\n\n", r.text)
+        return null
+      }
+      // console.log("DATA:", data)
+      return data
+    }).filter((r) => r !== null);
+
+    // console.log('SOURCE SCORES:', JSON.stringify(source_scores, null, 2));
 
     // Update source_scores with source_doc id
     source_scores = source_scores.map((score: SourceScore, index: number) => {
@@ -234,7 +255,7 @@ export default async function handler(
       return score;
     });
 
-    console.log('NEW SOURCE SCORES:', JSON.stringify(source_scores, null, 4));
+    // console.log('NEW SOURCE SCORES:', JSON.stringify(source_scores, null, 4));
 
     // sendData(JSON.stringify({ source_scores }));
     res.status(200).json({ source_scores });
