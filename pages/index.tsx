@@ -153,42 +153,40 @@ export default function Home() {
     }
   };
 
-
   const fetchSummary = async (historyForSummary: any, currentSummary: any) => {
-
     try {
-      console.log("SUMMARY:", currentSummary)
-        setFetchingSummary(true);
-        const response = await fetch('/api/generate_summary', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            currentSummary,
-            history: historyForSummary,
-          }),
-        });
+      console.log('SUMMARY:', currentSummary);
+      setFetchingSummary(true);
+      const response = await fetch('/api/generate_summary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentSummary,
+          history: historyForSummary,
+        }),
+      });
 
-        console.log('SUMMARY RESPONSE:', response);
+      console.log('SUMMARY RESPONSE:', response);
 
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const { newSummary } = await response.json();
-        
-        console.log("SUMMARY RESPONSE DATA: ", newSummary)
-
-        setMessageState((state) => ({
-          ...state,
-          chatSummary: newSummary.text
-        }))
-      } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-      } finally {
-        setFetchingSummary(false);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
+
+      const { newSummary } = await response.json();
+
+      console.log('SUMMARY RESPONSE DATA: ', newSummary);
+
+      setMessageState((state) => ({
+        ...state,
+        chatSummary: newSummary.text,
+      }));
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    } finally {
+      setFetchingSummary(false);
+    }
   };
 
   useEffect(() => {
@@ -225,7 +223,7 @@ export default function Home() {
         history: lastHistoryEntry,
       }));
 
-      console.log("MESSAGE STATE:", messageState)
+      console.log('MESSAGE STATE:', messageState);
 
       fetchSummary(messageState.history, messageState.chatSummary);
     }
@@ -277,11 +275,15 @@ export default function Home() {
         body: JSON.stringify({
           question,
           history,
-          summary
+          summary,
         }),
         signal: ctrl.signal,
+        onerror(err) {
+          console.error('EventSource failed:', err);
+          ctrl.abort();
+        },
         onmessage: (event: any) => {
-          // console.log("EVENT:", event)
+          console.log('EVENT:', event);
           if (event.data === '[DONE]') {
             console.log("event.data === '[DONE]'", event.data, question);
             setMessageState((state) => {
@@ -304,6 +306,11 @@ export default function Home() {
             });
             setLoading(false);
             ctrl.abort();
+          } else if (event.data.includes('ERROR')) {
+            console.error("Error: ", event.data)
+            setLoading(false);
+            ctrl.abort();
+            throw new Error(event.data.replace('[ERROR]', ''));
           } else {
             const data = JSON.parse(event.data);
             if (data.sourceDocs) {
@@ -513,7 +520,7 @@ export default function Home() {
                     disabled={loading || evaluatingSources || fetchingSummary}
                     className={styles.generatebutton}
                   >
-                    {loading || evaluatingSources  || fetchingSummary ? (
+                    {loading || evaluatingSources || fetchingSummary ? (
                       <div className={styles.loadingwheel}>
                         <LoadingDots color="#000" />
                       </div>
