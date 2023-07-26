@@ -9,7 +9,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history } = req.body;
+  const { question, history, summary } = req.body;
 
   if (!question) {
     return res.status(400).json({ message: 'No question in the request' });
@@ -20,8 +20,9 @@ export default async function handler(
   const index = pinecone.Index(PINECONE_INDEX_NAME);
 
   /* create vectorstore*/
+  // TODO: add organization
   const vectorStore = await PineconeStore.fromExistingIndex(
-    new OpenAIEmbeddings({ maxConcurrency: 5, organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' }),
+    new OpenAIEmbeddings({ maxConcurrency: 5 }),
     {
       pineconeIndex: index,
       textKey: 'text',
@@ -52,6 +53,7 @@ export default async function handler(
     const response = await chain.call({
       question: sanitizedQuestion,
       chat_history: history || [],
+      summary: summary || '',
     });
 
     // console.log('response', response);

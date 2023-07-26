@@ -2,7 +2,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { pinecone } from '@/utils/pinecone-client';
-// import { CustomPDFLoader } from '@/utils/customPDFLoader';
+import { CustomPDFLoader } from '@/utils/customPDFLoader';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
 import { DirectoryLoader } from 'langchain/document_loaders';
 // import { DocxLoader } from 'langchain/document_loaders/fs/';
@@ -16,6 +16,7 @@ export const run = async () => {
     /*load raw docs from the all files in the directory */
     const directoryLoader = new DirectoryLoader(filePath, {
       '.docx': (path) => new DocxLoader(path),
+      '.pdf': (path) => new CustomPDFLoader(path),
       // '.md': (path) => new TextLoader(path),
     });
 

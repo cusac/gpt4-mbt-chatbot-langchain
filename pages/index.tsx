@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import Layout from '@/components/layout';
 import styles from '@/styles/Home.module.css';
@@ -203,16 +204,16 @@ export default function Home() {
       }
     }
 
-    if (messageState.history.length > 2) {
-      // grab all but the two most recent history entries
+    if (messageState.history.length > 1) {
+      // grab all but the most recent history entry
       const historyForSummary = messageState.history.slice(
         0,
-        messageState.history.length - 2,
+        messageState.history.length - 1,
       );
 
-      // now grab the last two history entries
-      const lastTwoHistoryEntries = messageState.history.slice(
-        messageState.history.length - 2,
+      // now grab the last history entry
+      const lastHistoryEntry = messageState.history.slice(
+        messageState.history.length - 1,
         messageState.history.length,
       );
 
@@ -221,12 +222,12 @@ export default function Home() {
       // set the message state with the last two history messages
       setMessageState((state) => ({
         ...state,
-        history: lastTwoHistoryEntries,
+        history: lastHistoryEntry,
       }));
 
       console.log("MESSAGE STATE:", messageState)
 
-      fetchSummary(historyForSummary, messageState.chatSummary);
+      fetchSummary(messageState.history, messageState.chatSummary);
     }
   }, [messageState]);
 
@@ -264,6 +265,7 @@ export default function Home() {
     const ctrl = new AbortController();
 
     const history = messageState.history;
+    const summary = messageState.chatSummary;
 
     try {
       console.log('STATE HISTORY:', history);
@@ -275,6 +277,7 @@ export default function Home() {
         body: JSON.stringify({
           question,
           history,
+          summary
         }),
         signal: ctrl.signal,
         onmessage: (event: any) => {
@@ -365,7 +368,7 @@ export default function Home() {
       <Layout>
         <div className="mx-auto flex flex-col gap-4">
           <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With MBT <span className="text-accent">AI</span>
+            Chat With <span className="text-accent">"AI Guy"</span>
           </h1>
           <main className={styles.main}>
             <div className={styles.cloud}>
@@ -484,7 +487,7 @@ export default function Home() {
               <div className={styles.cloudform}>
                 <form onSubmit={handleSubmit}>
                   <textarea
-                    disabled={loading}
+                    disabled={loading || evaluatingSources || fetchingSummary}
                     onKeyDown={handleEnter}
                     ref={textAreaRef}
                     autoFocus={false}
@@ -497,6 +500,8 @@ export default function Home() {
                         ? 'Waiting for response...'
                         : evaluatingSources
                         ? 'Fetching sources...'
+                        : fetchingSummary
+                        ? 'Processing the conversation...'
                         : "What's on your mind?"
                     }
                     value={query}
@@ -505,10 +510,10 @@ export default function Home() {
                   />
                   <button
                     type="submit"
-                    disabled={loading || evaluatingSources}
+                    disabled={loading || evaluatingSources || fetchingSummary}
                     className={styles.generatebutton}
                   >
-                    {loading || evaluatingSources ? (
+                    {loading || evaluatingSources  || fetchingSummary ? (
                       <div className={styles.loadingwheel}>
                         <LoadingDots color="#000" />
                       </div>

@@ -4,13 +4,13 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { updateSummary, makeChain, formatDocs } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
+import { limitTokens } from '../../scripts/0_utils'
 import * as fs from 'fs';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  console.log("HERE AT SUMMAR API")
   let { currentSummary, history } = req.body;
 
   if (!currentSummary) {
@@ -31,8 +31,18 @@ export default async function handler(
 
     console.log("NEW SUMMARY", newSummary)
 
+
+    const limitedSummaryObject = await limitTokens(
+      { summary: newSummary },
+      500,
+      200,
+      1,
+    );
+
+    const limitedSummary = limitedSummaryObject.summary;
+
     // sendData(JSON.stringify({ source_scores }));
-    res.status(200).json({ newSummary });
+    res.status(200).json({ newSummary: limitedSummary });
     res.end();
   } catch (error) {
     console.log('error', error);
