@@ -203,7 +203,7 @@ async function processDocxFile(inputDocxPath: string) {
     //print first 10 lines of text
     // console.log("TEXT:", text.split('\n').slice(0, 10).join('\n'));
 
-    let labelDescriptions;
+    let labelDescriptions: any;
 
     try {
       const labelFilename =

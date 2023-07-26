@@ -205,7 +205,7 @@ const summaryChain = () => {
   });
 };
 
-export const updateSummary = async (currentSummary, conversation) => {
+export const updateSummary = async (currentSummary: any, conversation: any) => {
   const chain = summaryChain();
 
   const testPrompt = await SUMMARIZE_PROMPT_GPT3.format({
@@ -290,7 +290,7 @@ export const makeChain = (
     return docs;
   };
 
-  const call = async ({ question, chat_history, summary }: { string; any }) => {
+  const call = async ({ question, chat_history, summary }) => {
     console.log('summary:', summary);
     console.log('question', question);
     console.log('history', chat_history);

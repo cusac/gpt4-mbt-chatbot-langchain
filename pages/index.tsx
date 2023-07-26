@@ -154,7 +154,7 @@ export default function Home() {
   };
 
 
-  const fetchSummary = async (historyForSummary, currentSummary) => {
+  const fetchSummary = async (historyForSummary: any, currentSummary: any) => {
 
     try {
       console.log("SUMMARY:", currentSummary)
