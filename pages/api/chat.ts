@@ -31,7 +31,8 @@ export default async function handler(
   );
 
   res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
+    'Content-Type': 'text/event-stream;charset=utf-8',
+    'Content-Encoding': 'none',
     'Cache-Control': 'no-cache, no-transform',
     Connection: 'keep-alive',
   });

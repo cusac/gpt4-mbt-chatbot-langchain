@@ -265,8 +265,8 @@ export const makeChain = (
     llm: new OpenAIChat(
       {
         temperature: 1,
-        // modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
-        modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
         streaming: Boolean(onTokenStream),
         callbackManager: onTokenStream
           ? CallbackManager.fromHandlers({

@@ -267,9 +267,11 @@ export default function Home() {
 
     try {
       console.log('STATE HISTORY:', history);
+
       fetchEventSource('/api/chat', {
         method: 'POST',
         headers: {
+          Accept: 'text/event-stream',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -307,7 +309,7 @@ export default function Home() {
             setLoading(false);
             ctrl.abort();
           } else if (event.data.includes('ERROR')) {
-            console.error("Error: ", event.data)
+            console.error('Error: ', event.data);
             setLoading(false);
             ctrl.abort();
             throw new Error(event.data.replace('[ERROR]', ''));
