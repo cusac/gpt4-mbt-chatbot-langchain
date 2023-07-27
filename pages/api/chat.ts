@@ -34,6 +34,7 @@ export default async function handler(
     'Content-Type': 'text/event-stream;charset=utf-8',
     'Content-Encoding': 'none',
     'Cache-Control': 'no-cache, no-transform',
+    'X-Accel-Buffering': 'no',
     Connection: 'keep-alive',
   });
 
