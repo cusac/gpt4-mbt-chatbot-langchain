@@ -15,6 +15,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { MBTLink, SourceScore } from './api/evaluate_source';
+import Pusher from 'pusher-js';
 
 export default function Home() {
   const [query, setQuery] = useState<string>('');
@@ -23,6 +24,9 @@ export default function Home() {
   const [fetchingSummary, setFetchingSummary] = useState<boolean>(false);
   const [sourceDocs, setSourceDocs] = useState<Document[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [queue, setQueue] = useState<{ [key: number]: any }>({});
+  const [lastProcessedId, setLastProcessedId] = useState(0);
+  const [doneMessages, setDoneMessages] = useState<boolean>(false);
   const [messageState, setMessageState] = useState<{
     messages: Message[];
     pending?: string;
@@ -43,6 +47,9 @@ export default function Home() {
     pendingSourceDocs: [],
   });
 
+  // Controls how many messages are displayed at a time. Not really needed since we mainly throttle on the server side.
+  const THROTTLE = 1;
+
   const { messages, pending, history, chatSummary, pendingSourceDocs } =
     messageState;
 
@@ -51,7 +58,61 @@ export default function Home() {
 
   useEffect(() => {
     textAreaRef.current?.focus();
+
+    console.log('CURRENT ENV:', process.env.NEXT_PUBLIC_ENV);
+
+    if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+      // Enable pusher logging - don't include this in production
+      Pusher.logToConsole = true;
+      setDoneMessages(true);
+    }
+
+    if (process.env.NEXT_PUBLIC_ENV === 'production') {
+      var pusher = new Pusher('374822fd0361d57a5da2', {
+        cluster: 'us3',
+      });
+
+      let channel = pusher.channel('chat-channel');
+
+      if (!channel) {
+        console.log('SUBSCRIBING TO CHANNEL');
+        channel = pusher.subscribe('chat-channel');
+
+        channel.bind('chat-event', function (data: any) {
+          // alert(`pusher data: ${JSON.stringify(data)}`)
+
+          setQueue((prevQueue) => ({ ...prevQueue, [data.id]: data }));
+          // console.log('PROD MESSAGE');
+          // recieveChatEvent({ data }, { abort: () => {} } as any);
+        });
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    // Check if the next group of messages in the sequence has arrived
+    const nextGroupIds = Array.from(
+      { length: THROTTLE },
+      (_, i) => lastProcessedId + i + 1,
+    );
+    if (nextGroupIds.every((id) => queue[id])) {
+      // console.log(
+      //   'Processing messages',
+      //   nextGroupIds.map((id) => queue[id]),
+      // );
+      nextGroupIds.forEach((id) => recieveChatData(queue[id]));
+      const newQueue = { ...queue };
+      nextGroupIds.forEach((id) => delete newQueue[id]); // Remove processed messages from queue
+      setQueue(newQueue);
+      setLastProcessedId((prevId) => prevId + THROTTLE); // Increment the processed message ID
+    }
+  }, [queue, lastProcessedId]);
+
+  const doneMessagesRef = useRef(doneMessages);
+
+  useEffect(() => {
+    doneMessagesRef.current = doneMessages;
+  }, [doneMessages]);
 
   // Function that takes in text and creates a hash Id number
   const createHashId = (text: string) => {
@@ -59,6 +120,32 @@ export default function Home() {
       a = (a << 5) - a + b.charCodeAt(0);
       return a & a;
     }, 0);
+  };
+
+  const waitForDoneMessages = async () => {
+    return new Promise((resolve) => {
+      const interval = setInterval(() => {
+        if (doneMessagesRef.current) {
+          clearInterval(interval);
+          resolve(true);
+        } else {
+          console.log('NOT DONE WAITING YET');
+        }
+      }, 100);
+    });
+  };
+
+  const recieveChatData = (data: any) => {
+    console.log('RECIEE CHAT DATA:', data);
+    if (data.data === '[DONE MESSAGES]') {
+      console.log('WE DONE HERE');
+      setDoneMessages(true);
+    } else {
+      setMessageState((state) => ({
+        ...state,
+        pending: (state.pending ?? '') + data.data,
+      }));
+    }
   };
 
   const fetchEval = async (userMessage: Message, apiMessage: Message) => {
@@ -285,47 +372,56 @@ export default function Home() {
           ctrl.abort();
         },
         onmessage: (event: any) => {
+          let data = event.data;
+
+          try {
+            data = JSON.parse(data);
+          } catch (e) {}
+
           console.log('EVENT:', event);
-          if (event.data === '[DONE]') {
-            console.log("event.data === '[DONE]'", event.data, question);
-            setMessageState((state) => {
-              return {
-                ...state,
-                history: [...state.history, [question, state.pending ?? '']],
-                messages: [
-                  ...state.messages,
-                  {
-                    type: 'apiMessage',
-                    message: state.pending ?? '',
-                    sourceDocs: state.pendingSourceDocs,
-                    sourcesEvaluated: false,
-                    sourcesEvaluationPending: false,
-                  },
-                ],
-                pending: undefined,
-                pendingSourceDocs: undefined,
-              };
+          console.log('DATA:', data);
+          if (data === '[DONE]') {
+            console.log('DONE BUT WAITING');
+            waitForDoneMessages().then(() => {
+              console.log("data === '[DONE]'");
+              console.log('CURRENT QUESTION:', question);
+              setMessageState((state) => {
+                return {
+                  ...state,
+                  history: [...state.history, [question, state.pending ?? '']],
+                  messages: [
+                    ...state.messages,
+                    {
+                      type: 'apiMessage',
+                      message: state.pending ?? '',
+                      sourceDocs: state.pendingSourceDocs,
+                      sourcesEvaluated: false,
+                      sourcesEvaluationPending: false,
+                    },
+                  ],
+                  pending: undefined,
+                  pendingSourceDocs: undefined,
+                };
+              });
+              setLoading(false);
+              if (process.env.NEXT_PUBLIC_ENV === 'production') {
+                setDoneMessages(false);
+              }
+              ctrl.abort();
             });
+          } else if (data.sourceDocs) {
+            setMessageState((state) => ({
+              ...state,
+              pendingSourceDocs: data.sourceDocs,
+            }));
+          } else if (JSON.stringify(data).includes('ERROR')) {
+            console.error('Error: ', data);
             setLoading(false);
             ctrl.abort();
-          } else if (event.data.includes('ERROR')) {
-            console.error('Error: ', event.data);
-            setLoading(false);
-            ctrl.abort();
-            throw new Error(event.data.replace('[ERROR]', ''));
-          } else {
-            const data = JSON.parse(event.data);
-            if (data.sourceDocs) {
-              setMessageState((state) => ({
-                ...state,
-                pendingSourceDocs: data.sourceDocs,
-              }));
-            } else {
-              setMessageState((state) => ({
-                ...state,
-                pending: (state.pending ?? '') + data.data,
-              }));
-            }
+            throw new Error(data.replace('[ERROR]', ''));
+          } else if (process.env.NEXT_PUBLIC_ENV === 'development') {
+            console.log('DEV MESSAGE');
+            recieveChatData(event.data);
           }
         },
       });
