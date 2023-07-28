@@ -5,6 +5,7 @@ import { makeChain } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
 import Pusher from 'pusher';
+import PubNub from 'pubnub';
 
 // Instantiate pusher
 var pusher = new Pusher({
@@ -15,6 +16,13 @@ var pusher = new Pusher({
   useTLS: true,
 });
 
+
+let pubnub = new PubNub({
+  publishKey: 'pub-c-54f26b1f-cd33-4520-b796-b7243505d84e',
+  subscribeKey: 'sub-c-61af9b42-e1d7-11e7-9e25-9e24923e4f82',
+  userId: 'myUniqueUserId',
+});
+
 let THROTTLE: number = 1;
 
 if (process.env.NEXT_PUBLIC_ENV === 'production') {
@@ -23,6 +31,16 @@ if (process.env.NEXT_PUBLIC_ENV === 'production') {
 
 let queue: any[] = [];
 let counter = 0;
+
+const publishMessage = async (message: any) => {
+  // With the right payload, you can publish a message, add a reaction to a message,
+  // send a push notification, or send a small payload called a signal.
+  const publishPayload = {
+      channel : "chat-channel",
+      message
+  };
+  await pubnub.publish(publishPayload);
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -79,7 +97,8 @@ export default async function handler(
         doneSendingMessages = true;
       }
 
-      pusher.trigger('chat-channel', 'chat-event', data);
+      // pusher.trigger('chat-channel', 'chat-event', data);
+      publishMessage(data);
       count++;
     }
   };

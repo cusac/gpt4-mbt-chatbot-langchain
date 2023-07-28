@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/accordion';
 import { MBTLink, SourceScore } from './api/evaluate_source';
 import Pusher from 'pusher-js';
+import PubNub from 'pubnub';
 
 export default function Home() {
   const [query, setQuery] = useState<string>('');
@@ -65,22 +66,53 @@ export default function Home() {
     }
 
     if (process.env.NEXT_PUBLIC_ENV === 'production') {
-      var pusher = new Pusher('374822fd0361d57a5da2', {
-        cluster: 'us3',
+      let pubnub = new PubNub({
+        publishKey: 'pub-c-54f26b1f-cd33-4520-b796-b7243505d84e',
+        subscribeKey: 'sub-c-61af9b42-e1d7-11e7-9e25-9e24923e4f82',
+        userId: 'myUniqueUserId',
       });
 
-      let channel = pusher.channel('chat-channel');
+      const listener = {
+        status: (statusEvent: any) => {
+          if (statusEvent.category === 'PNConnectedCategory') {
+            console.log('Connected');
+          }
+        },
+        message: (messageEvent: any) => {
+          console.log('PUBNUB DATA:', messageEvent);
 
-      if (!channel) {
-        console.log('SUBSCRIBING TO CHANNEL');
-        channel = pusher.subscribe('chat-channel');
-
-        channel.bind('chat-event', function (data: any) {
-          console.log('PUSHER DATA:', data);
+          const data = JSON.parse(messageEvent.message)
 
           setQueue((prevQueue) => ({ ...prevQueue, [data.id]: data }));
-        });
-      }
+        },
+        presence: (presenceEvent: any) => {
+          // handle presence
+        },
+      };
+      pubnub.addListener(listener);
+
+
+      // subscribe to a channel
+      pubnub.subscribe({
+        channels: ["chat-channel"],
+      });
+
+      // var pusher = new Pusher('374822fd0361d57a5da2', {
+      //   cluster: 'us3',
+      // });
+
+      // let channel = pusher.channel('chat-channel');
+
+      // if (!channel) {
+      //   console.log('SUBSCRIBING TO CHANNEL');
+      //   channel = pusher.subscribe('chat-channel');
+
+      //   channel.bind('chat-event', function (data: any) {
+      //     console.log('PUSHER DATA:', data);
+
+      //     setQueue((prevQueue) => ({ ...prevQueue, [data.id]: data }));
+      //   });
+      // }
     }
   }, []);
 
@@ -89,9 +121,9 @@ export default function Home() {
     if (queue[lastProcessedId + 1]) {
       recieveChatData(queue[lastProcessedId + 1]);
       const newQueue = { ...queue };
-      delete newQueue[lastProcessedId + 1];  // Remove processed message from queue
+      delete newQueue[lastProcessedId + 1]; // Remove processed message from queue
       setQueue(newQueue);
-      setLastProcessedId(prevId => prevId + 1);  // Increment the processed message ID
+      setLastProcessedId((prevId) => prevId + 1); // Increment the processed message ID
     }
   }, [queue, lastProcessedId]);
 
@@ -332,7 +364,7 @@ export default function Home() {
 
     setLoading(true);
 
-    setDoneMessages(false);  // Reset `doneMessages` state here
+    setDoneMessages(false); // Reset `doneMessages` state here
     setQuery('');
     setLastProcessedId(0);
     setMessageState((state) => ({ ...state, pending: '' }));
