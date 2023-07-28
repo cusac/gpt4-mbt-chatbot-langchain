@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-import webpack from 'webpack';
+import webpack from 'webpack/webpack-lib.js';
 import dotenv from 'dotenv';
 const localEnv = dotenv.config().parsed;
 const nextConfig = {
