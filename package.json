@@ -54,7 +54,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.5",
-    "ssm": "link:aws-sdk/clients/ssm",
     "string-similarity": "^4.0.4",
     "tailwind-merge": "^1.10.0"
   },
