@@ -391,7 +391,7 @@ export default function Home() {
         signal: ctrl.signal,
         onerror(err) {
           console.error('EventSource failed:', err);
-          ctrl.abort();
+          // ctrl.abort();
         },
         onmessage: (event: any) => {
           let data = event.data;
