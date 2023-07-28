@@ -83,6 +83,11 @@ export default function Home() {
 
           const data = JSON.parse(messageEvent.message)
 
+          if (data.id < lastProcessedId) {
+            console.log("ADDING LAST PROCESSED ID TO DATA ID")
+            data.id = data.id + lastProcessedId;
+          }
+
           setQueue((prevQueue) => ({ ...prevQueue, [data.id]: data }));
         },
         presence: (presenceEvent: any) => {
