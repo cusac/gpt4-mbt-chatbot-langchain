@@ -411,7 +411,7 @@ export default function Home() {
             throw new Error(data.replace('[ERROR]', ''));
           } else if (process.env.NEXT_PUBLIC_ENV === 'development') {
             console.log('DEV MESSAGE');
-            recieveChatData(event.data);
+            recieveChatData(JSON.parse(event.data));
           }
         },
       });

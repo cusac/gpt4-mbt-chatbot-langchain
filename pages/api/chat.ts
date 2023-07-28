@@ -140,7 +140,9 @@ export default async function handler(
     sendData(JSON.stringify({ data: '[DONE MESSAGES]' }));
     flushMessages();
 
-    await waitForDoneMessages();
+    if (process.env.NEXT_PUBLIC_ENV === 'production') {
+      await waitForDoneMessages();
+    }
 
     console.log("MOVING ON")
 
