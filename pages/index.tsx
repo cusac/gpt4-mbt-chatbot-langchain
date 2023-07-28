@@ -54,18 +54,20 @@ export default function Home() {
   const messageListRef = useRef<HTMLDivElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
+  const CURRENT_ENV = process.env.NEXT_PUBLIC_ENV || 'development';
+
   useEffect(() => {
     textAreaRef.current?.focus();
 
-    console.log('CURRENT ENV:', process.env.NEXT_PUBLIC_ENV);
+    console.log('CURRENT ENV:', CURRENT_ENV);
 
-    if (process.env.NEXT_PUBLIC_ENV !== 'production') {
+    if (CURRENT_ENV !== 'production') {
       // Enable pusher logging - don't include this in production
       Pusher.logToConsole = true;
       setDoneMessages(true);
     }
 
-    if (process.env.NEXT_PUBLIC_ENV === 'production') {
+    if (CURRENT_ENV === 'production') {
       let pubnub = new PubNub({
         publishKey: 'pub-c-54f26b1f-cd33-4520-b796-b7243505d84e',
         subscribeKey: 'sub-c-61af9b42-e1d7-11e7-9e25-9e24923e4f82',
@@ -431,7 +433,7 @@ export default function Home() {
                 };
               });
               setLoading(false);
-              if (process.env.NEXT_PUBLIC_ENV === 'production') {
+              if (CURRENT_ENV === 'production') {
                 setDoneMessages(false);
               }
               ctrl.abort();
@@ -446,7 +448,7 @@ export default function Home() {
             setLoading(false);
             ctrl.abort();
             throw new Error(data.replace('[ERROR]', ''));
-          } else if (process.env.NEXT_PUBLIC_ENV === 'development') {
+          } else if (CURRENT_ENV === 'development') {
             console.log('DEV MESSAGE');
             recieveChatData(JSON.parse(event.data));
           }
