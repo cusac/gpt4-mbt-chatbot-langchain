@@ -47,9 +47,6 @@ export default function Home() {
     pendingSourceDocs: [],
   });
 
-  // Controls how many messages are displayed at a time. Not really needed since we mainly throttle on the server side.
-  const THROTTLE = 1;
-
   const { messages, pending, history, chatSummary, pendingSourceDocs } =
     messageState;
 
@@ -79,32 +76,22 @@ export default function Home() {
         channel = pusher.subscribe('chat-channel');
 
         channel.bind('chat-event', function (data: any) {
-          // alert(`pusher data: ${JSON.stringify(data)}`)
+          console.log('PUSHER DATA:', data);
 
           setQueue((prevQueue) => ({ ...prevQueue, [data.id]: data }));
-          // console.log('PROD MESSAGE');
-          // recieveChatEvent({ data }, { abort: () => {} } as any);
         });
       }
     }
   }, []);
 
   useEffect(() => {
-    // Check if the next group of messages in the sequence has arrived
-    const nextGroupIds = Array.from(
-      { length: THROTTLE },
-      (_, i) => lastProcessedId + i + 1,
-    );
-    if (nextGroupIds.every((id) => queue[id])) {
-      // console.log(
-      //   'Processing messages',
-      //   nextGroupIds.map((id) => queue[id]),
-      // );
-      nextGroupIds.forEach((id) => recieveChatData(queue[id]));
+    // Check if the next message in the sequence has arrived
+    if (queue[lastProcessedId + 1]) {
+      recieveChatData(queue[lastProcessedId + 1]);
       const newQueue = { ...queue };
-      nextGroupIds.forEach((id) => delete newQueue[id]); // Remove processed messages from queue
+      delete newQueue[lastProcessedId + 1];  // Remove processed message from queue
       setQueue(newQueue);
-      setLastProcessedId((prevId) => prevId + THROTTLE); // Increment the processed message ID
+      setLastProcessedId(prevId => prevId + 1);  // Increment the processed message ID
     }
   }, [queue, lastProcessedId]);
 
@@ -344,7 +331,10 @@ export default function Home() {
     }));
 
     setLoading(true);
+
+    setDoneMessages(false);  // Reset `doneMessages` state here
     setQuery('');
+    setLastProcessedId(0);
     setMessageState((state) => ({ ...state, pending: '' }));
 
     const ctrl = new AbortController();
