@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
-const { parsed: localEnv } = require('dotenv').config();
+import dotenv from 'dotenv';
+const localEnv = dotenv.config().parsed;
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
