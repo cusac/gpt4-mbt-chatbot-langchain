@@ -80,9 +80,7 @@ export default async function handler(
   let count = 1;
 
   const sendData = (data: string) => {
-    console.log('SENDING DATA:', data);
     if (process.env.NEXT_PUBLIC_ENV === 'development') {
-      console.log('SENDING DATA DEV');
       res.write(`data: ${data}\n\n`);
     } else {
       let dataJSON;

@@ -81,7 +81,7 @@ export default function Home() {
           }
         },
         message: (messageEvent: any) => {
-          console.log('PUBNUB DATA:', messageEvent);
+          // console.log('PUBNUB DATA:', messageEvent);
 
           const data = JSON.parse(messageEvent.message)
 
@@ -162,7 +162,7 @@ export default function Home() {
   };
 
   const recieveChatData = (data: any) => {
-    console.log('RECIEE CHAT DATA:', data);
+    // console.log('RECIEE CHAT DATA:', data);
     if (data.data === '[DONE MESSAGES]') {
       console.log('WE DONE HERE');
       setDoneMessages(true);
@@ -407,8 +407,8 @@ export default function Home() {
             data = JSON.parse(data);
           } catch (e) {}
 
-          console.log('EVENT:', event);
-          console.log('DATA:', data);
+          // console.log('EVENT:', event);
+          // console.log('DATA:', data);
           if (data === '[DONE]') {
             console.log('DONE BUT WAITING');
             waitForDoneMessages().then(() => {
@@ -449,7 +449,7 @@ export default function Home() {
             ctrl.abort();
             throw new Error(data.replace('[ERROR]', ''));
           } else if (CURRENT_ENV === 'development') {
-            console.log('DEV MESSAGE');
+            // console.log('DEV MESSAGE');
             recieveChatData(JSON.parse(event.data));
           }
         },
