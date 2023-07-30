@@ -4,17 +4,7 @@ import { PineconeStore } from 'langchain/vectorstores/pinecone';
 import { makeChain } from '@/utils/makechain';
 import { pinecone } from '@/utils/pinecone-client';
 import { PINECONE_INDEX_NAME, PINECONE_NAME_SPACE } from '@/config/pinecone';
-import Pusher from 'pusher';
 import PubNub from 'pubnub';
-
-// Instantiate pusher
-var pusher = new Pusher({
-  appId: process.env.PUSHER_APP_ID || '',
-  key: '374822fd0361d57a5da2',
-  secret: process.env.PUSHER_SECRET || '',
-  cluster: 'us3',
-  useTLS: true,
-});
 
 
 let pubnub = new PubNub({
@@ -46,7 +36,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  const { question, history, summary } = req.body;
+  const { question, history, summary, version } = req.body;
 
   let doneSendingMessages = false;
 
@@ -95,7 +85,6 @@ export default async function handler(
         doneSendingMessages = true;
       }
 
-      // pusher.trigger('chat-channel', 'chat-event', data);
       publishMessage(data);
       count++;
     }
@@ -140,7 +129,7 @@ export default async function handler(
   sendDataWrite(JSON.stringify({ data: '' }));
 
   //create chain
-  const chain = makeChain(vectorStore, (token: string) => {
+  const chain = makeChain(vectorStore, version, (token: string) => {
     throttleSendData(token);
   });
 

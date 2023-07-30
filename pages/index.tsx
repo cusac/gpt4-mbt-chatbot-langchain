@@ -15,7 +15,6 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { MBTLink, SourceScore } from './api/evaluate_source';
-import Pusher from 'pusher-js';
 import PubNub from 'pubnub';
 
 export default function Home() {
@@ -28,6 +27,7 @@ export default function Home() {
   const [queue, setQueue] = useState<{ [key: number]: any }>({});
   const [lastProcessedId, setLastProcessedId] = useState(0);
   const [doneMessages, setDoneMessages] = useState<boolean>(false);
+  const [selectedAI, setSelectedAI] = useState<string>('gpt-3.5-turbo');
   const [messageState, setMessageState] = useState<{
     messages: Message[];
     pending?: string;
@@ -48,6 +48,11 @@ export default function Home() {
     pendingSourceDocs: [],
   });
 
+const MODEL_OPTIONS = {
+  'AI GUY': 'gpt-4',
+  'AI GUY Jr.': 'gpt-3.5-turbo'
+}
+
   const { messages, pending, history, chatSummary, pendingSourceDocs } =
     messageState;
 
@@ -62,8 +67,6 @@ export default function Home() {
     console.log('CURRENT ENV:', CURRENT_ENV);
 
     if (CURRENT_ENV !== 'production') {
-      // Enable pusher logging - don't include this in production
-      Pusher.logToConsole = true;
       setDoneMessages(true);
     }
 
@@ -83,10 +86,10 @@ export default function Home() {
         message: (messageEvent: any) => {
           // console.log('PUBNUB DATA:', messageEvent);
 
-          const data = JSON.parse(messageEvent.message)
+          const data = JSON.parse(messageEvent.message);
 
           if (data.id < lastProcessedId) {
-            console.log("ADDING LAST PROCESSED ID TO DATA ID")
+            console.log('ADDING LAST PROCESSED ID TO DATA ID');
             data.id = data.id + lastProcessedId;
           }
 
@@ -98,28 +101,10 @@ export default function Home() {
       };
       pubnub.addListener(listener);
 
-
       // subscribe to a channel
       pubnub.subscribe({
-        channels: ["chat-channel"],
+        channels: ['chat-channel'],
       });
-
-      // var pusher = new Pusher('374822fd0361d57a5da2', {
-      //   cluster: 'us3',
-      // });
-
-      // let channel = pusher.channel('chat-channel');
-
-      // if (!channel) {
-      //   console.log('SUBSCRIBING TO CHANNEL');
-      //   channel = pusher.subscribe('chat-channel');
-
-      //   channel.bind('chat-event', function (data: any) {
-      //     console.log('PUSHER DATA:', data);
-
-      //     setQueue((prevQueue) => ({ ...prevQueue, [data.id]: data }));
-      //   });
-      // }
     }
   }, []);
 
@@ -394,6 +379,7 @@ export default function Home() {
           question,
           history,
           summary,
+          version: selectedAI,
         }),
         signal: ctrl.signal,
         onerror(err) {
@@ -501,9 +487,28 @@ export default function Home() {
     <>
       <Layout>
         <div className="mx-auto flex flex-col gap-4">
-          <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
-            Chat With <span className="text-accent">"AI Guy"</span>
-          </h1>
+          <div className="flex items-center justify-items-center justify-center">
+            <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center">
+              Chat With
+            </h1>
+
+            <h1 className="text-2xl font-bold leading-[1.1] tracking-tighter text-center pl-2">
+              <div>
+                <select
+                  value={selectedAI}
+                  onChange={(e) => setSelectedAI(e.target.value)}
+                  className="border p-2 rounded-md"
+                >
+                  {Object.keys(MODEL_OPTIONS).map((key) => (
+                    <option key={key} value={MODEL_OPTIONS[key as keyof typeof MODEL_OPTIONS] as string}>
+                      {key}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </h1>
+          </div>
+
           <main className={styles.main}>
             <div className={styles.cloud}>
               <div ref={messageListRef} className={styles.messagelist}>

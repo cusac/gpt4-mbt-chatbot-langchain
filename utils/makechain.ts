@@ -6,6 +6,7 @@ import { CallbackManager } from 'langchain/callbacks';
 
 const AI_NAME = 'AI Guy';
 const NUMBER_OF_REFERENCES = 4;
+const ALLOWED_MODELS = ['gpt-3.5-turbo', 'gpt-4'];
 
 // TODO: provide a wrapper to call chains that tracks token usage and handles maxToken errors
 
@@ -260,6 +261,7 @@ export const formatDocs = (docs: string): string => {
 
 export const makeChain = (
   vectorstore: PineconeStore,
+  version: string,
   onTokenStream?: (token: string) => void,
 ) => {
   const questionGenerator = new LLMChain({
@@ -274,11 +276,22 @@ export const makeChain = (
     prompt: CONDENSE_PROMPT_GPT3,
   });
 
+  let model = 'gpt-3.5-turbo';
+
+  if (!ALLOWED_MODELS.includes(version)) {
+    console.log('Invalid model version:', version);
+  } else {
+    model = version;
+  }
+
+  console.log("modelName:", model)
+  
   const docChain = new LLMChain({
     llm: new OpenAIChat(
       {
         temperature: 1,
-        modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        modelName: model,
+        // modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
         // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
         streaming: Boolean(onTokenStream),
         callbackManager: onTokenStream
@@ -365,6 +378,8 @@ export const makeChain = (
     });
 
     console.log('questionPrompt', questionPrompt);
+
+    console.log("DOC CHAIN", docChain)
 
     const response = await docChain.call({
       summary,
