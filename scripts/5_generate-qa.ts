@@ -15,7 +15,8 @@ import {
   generateSummaryFromQA,
   TranscriptData,
   limitTokens,
-} from './0_utils';
+  parsePartialJson,
+} from './0_utils_alt';
 
 const generateQA = async (
   transcript: string,
@@ -65,16 +66,16 @@ const generateQA = async (
     console.log('GENERATED QA:', latestQaPairs);
     console.log('QA PAIRS:', qaPairs);
 
-    fs.writeFile(conversationPath, JSON.stringify(summaries, null, 4), 'utf8');
+    await fs.writeFile(conversationPath, JSON.stringify(summaries, null, 4), 'utf8');
 
-    fs.writeFile(outputPath, JSON.stringify(qaPairs, null, 4), 'utf8');
+    await fs.writeFile(outputPath, JSON.stringify(qaPairs, null, 4), 'utf8');
 
     index += 1;
 
-    fs.writeFile(indexFilePath, index.toString(), 'utf8');
+    await fs.writeFile(indexFilePath, index.toString(), 'utf8');
   }
 
-  fs.writeFile(indexFilePath, 'DONE', 'utf8');
+  await fs.writeFile(indexFilePath, 'DONE', 'utf8');
 
   // for (const pair of qaPairsRaw) {
   //   const { qaPairs: latestQaPairs, conversationSummary: updatedConversationSummary } = await processQA(pair, agentName, conversationSummary, 1500, 1100)
@@ -187,7 +188,7 @@ async function processFile(inputPath: string) {
       indexFilePath,
     );
 
-    fs.writeFile(outputFilePath, JSON.stringify(qaPairs, null, 4));
+    await fs.writeFile(outputFilePath, JSON.stringify(qaPairs, null, 4));
   } catch (error) {
     console.error('Error processing file:', error);
   }

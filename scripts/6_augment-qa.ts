@@ -71,16 +71,16 @@ const generateQA = async (qaPairs: TranscriptData[], agent: string, augmentedQaP
     conversationSummary = limitedSummaryObject.summary;
     summaries.push(conversationSummary);
 
-    fs.writeFile(conversationPath, JSON.stringify(summaries, null, 4), 'utf8');
+    await fs.writeFile(conversationPath, JSON.stringify(summaries, null, 4), 'utf8');
 
-    augmentedQaPair = parsePartialJson(augmentedQaPair)
+    augmentedQaPair = await parsePartialJson(augmentedQaPair)
     console.log('CONVERSATION SUMMARY:', conversationSummary);
     console.log('PAIR:', pair);
     console.log('GENERATED QA:', augmentedQaPair);
     augmentedQaPairs.push(augmentedQaPair);
     console.log('AUGMENTED QA PAIRS:', augmentedQaPairs);
 
-    fs.writeFile(outputPath, JSON.stringify(augmentedQaPairs), 'utf8');
+    await fs.writeFile(outputPath, JSON.stringify(augmentedQaPairs), 'utf8');
   }
 
   return augmentedQaPairs;
@@ -169,7 +169,7 @@ async function processFile(inputPath: string) {
     augmentedQaPairs = await generateQA(qaPairs, agentName, augmentedQaPairs, conversatioFilePath, outputFilePath)
 
 
-    fs.writeFile(outputFilePath, JSON.stringify(augmentedQaPairs, null, 4));
+    await fs.writeFile(outputFilePath, JSON.stringify(augmentedQaPairs, null, 4));
   } catch (error) {
     console.error('Error processing file:', error);
   }

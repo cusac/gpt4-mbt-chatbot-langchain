@@ -23,7 +23,7 @@ import {
 } from './0_utils';
 
 let globalTokenCount = 0;
-let qaLimit = 5;
+let qaLimit = 1;
 
 type TrainingData = {
   prompt: string;
@@ -46,12 +46,12 @@ const contstructTrainingData = (
   let startIndex = endIndex;
   let dataDummy: any[] = [conversationSummary];
 
-  console.log('DATA END INDEX:', endIndex);
+  // console.log('DATA END INDEX:', endIndex);
 
   while (startIndex > 0 && endIndex - startIndex < qaLimit) {
     dataDummy.push(pair);
     tokenSize = countAllTokens(dataDummy, qaPairs[endIndex - 1]);
-    console.log('Token Size:', tokenSize);
+    // console.log('Token Size:', tokenSize);
     if (tokenSize > tokenLimit) {
       break;
     }
@@ -62,7 +62,7 @@ const contstructTrainingData = (
   pair = qaPairs[startIndex];
 
   while (startIndex < endIndex) {
-    console.log('Data Start Index:', startIndex);
+    // console.log('Data Start Index:', startIndex);
     data.prompt =
       data.prompt +
       `\n\nQuestioner:\n\n###\n${pair.questioner}\n###\n\nAgent:\n\n###\n${pair.agent}\n###`;
@@ -111,11 +111,10 @@ const generateTrainingData = async (
   }
 
   while (index < qaPairs.length) {
-    console.log('SET INDEX:', index);
+    // console.log('SET INDEX:', index);
     let nextData = contstructTrainingData(qaPairs, index, conversationSummary);
     trainingData.push(nextData);
 
-    // TODO: pull in summary from file
     if (summaries[index]) {
       conversationSummary = summaries[index];
     } else {
@@ -135,7 +134,7 @@ const generateTrainingData = async (
       conversationSummary = limitedSummaryObject.summary;
       summaries.push(conversationSummary);
 
-      fs.writeFile(
+      await fs.writeFile(
         conversationPath,
         JSON.stringify(summaries, null, 4),
         'utf8',
@@ -146,7 +145,7 @@ const generateTrainingData = async (
     // console.log('nextData:', nextData);
     // console.log('Training Set:', trainingData);
 
-    fs.writeFile(outputPath, JSON.stringify(trainingData, null, 4), 'utf8');
+    await fs.writeFile(outputPath, JSON.stringify(trainingData, null, 4), 'utf8');
 
     index += 1;
   }
@@ -159,7 +158,7 @@ type SpeakerContent = {
 
 async function processFile(inputPath: string) {
   try {
-    const qaFileName = path.basename(inputPath, '.txt') + '__qa.json';
+    const qaFileName = path.basename(inputPath, '.txt') + '__qa_fixed.json';
     const qaDirectoryPath = path.join(process.cwd(), 'scripts/5_qa');
     const qaFilePath = path.join(qaDirectoryPath, qaFileName);
 
@@ -208,10 +207,17 @@ async function processFile(inputPath: string) {
       trainingData = JSON.parse(trainingDataText);
       let numberProcessed = trainingData.length;
 
+      console.log('Number Processed:', numberProcessed);
+      console.log('QA Pair Length:', qaPairs.length);
+
       if (numberProcessed < qaPairs.length) {
         processed = false;
       }
-    } catch (err) {
+    } catch (err: any) {
+      // Log error if it is not a file not found error
+      if (err?.code !== 'ENOENT') {
+        console.log("Error checking if file is processed:", err);
+      }
       processed = false;
     }
 
@@ -221,6 +227,8 @@ async function processFile(inputPath: string) {
     if (processed) {
       console.log('File already processed:', outputFilePath);
       return;
+    } else {
+      console.log('Processing file:', outputFilePath);
     }
 
     let agentName = Object.keys(agentDescription)[0];
@@ -242,7 +250,7 @@ async function processFile(inputPath: string) {
       outputFilePath,
     );
 
-    fs.writeFile(outputFilePath, JSON.stringify(trainingData, null, 4));
+    // fs.writeFile(outputFilePath, JSON.stringify(trainingData, null, 4));
   } catch (error) {
     console.error('Error processing file:', error);
   }

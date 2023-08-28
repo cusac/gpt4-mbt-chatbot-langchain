@@ -82,7 +82,7 @@ const generateSpeakerSummaries = async (text: string) => {
         speaker_summaries,
       });
 
-      const labeledChunk = await limitTokens(parsePartialJson(response.text));
+      const labeledChunk = await limitTokens((await parsePartialJson(response.text)));
 
       console.log('Labeled chunk:', labeledChunk);
 

@@ -442,7 +442,7 @@ async function processDocxFile(inputTextPath: string) {
         [agentName]: agentDescription[agentName],
       };
       let compareResults = await compareSpeakers(JSON.stringify(compareJSON, null, 4));
-      compareResults = parsePartialJson(compareResults);
+      compareResults = await parsePartialJson(compareResults);
 
       let score = 0;
       for (const key in compareResults) {

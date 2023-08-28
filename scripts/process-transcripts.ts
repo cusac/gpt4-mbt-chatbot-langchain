@@ -53,7 +53,7 @@ const improveQAJson = async (qaJson: any) => {
 
     // console.log('RESPONSE:', response);
 
-    const improvedQAJson = parsePartialJson(
+    const improvedQAJson = await parsePartialJson(
       removeTextBeforeFirstBracket(response.text),
     );
 
@@ -192,7 +192,7 @@ If the conversation doesn't naturally contain questions and answers, infer them 
         conversation: chunk,
       });
 
-      const qaJson = parsePartialJson(response.text as any);
+      const qaJson = await parsePartialJson(response.text as any);
 
       allQA = allQA.concat(qaJson);
 
@@ -245,7 +245,7 @@ If the conversation doesn't naturally contain questions and answers, infer them 
 //         conversation: chunk
 //       })
 
-//       const qaJson = parsePartialJson(response as any);
+//       const qaJson = await parsePartialJson(response as any);
 
 //       allQA = allQA.concat(qaJson);
 
@@ -288,7 +288,7 @@ async function processDocxFile(inputDocxPath: string) {
       const outputFilePath = path.join(outputDirectoryPath, outputFilename);
 
       if (qaJson) {
-        fs.writeFile(outputFilePath, JSON.stringify(qaJson, null, 2));
+        await fs.writeFile(outputFilePath, JSON.stringify(qaJson, null, 2));
       }
     });
   } catch (error) {

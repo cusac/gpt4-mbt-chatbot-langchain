@@ -146,7 +146,7 @@ const reviseSpeakerLabels = async (
       });
 
       const labeledChunk = await limitTokens(
-        parsePartialJson(response.text),
+        (await parsePartialJson(response.text)),
         900,
         50,
       );

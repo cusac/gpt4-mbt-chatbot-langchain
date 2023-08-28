@@ -3,10 +3,15 @@ import { callChain, getGlobalTokenCount } from './0_utils';
 
 import { HfInferenceEndpoint } from '@huggingface/inference';
 
-const hf = new HfInferenceEndpoint(
-  'https://oobkevgy9bub2kft.us-east-1.aws.endpoints.huggingface.cloud',
-  process.env.HUGGINGFACE_API_KEY,
-);
+export const hfModels = {
+  'stablebeluga13B': 'https://whe8au64pb8fky7p.us-east-1.aws.endpoints.huggingface.cloud',
+  'vicuna13B': 'https://oobkevgy9bub2kft.us-east-1.aws.endpoints.huggingface.cloud',
+}
+
+// const hf = new HfInferenceEndpoint(
+//   'https://oobkevgy9bub2kft.us-east-1.aws.endpoints.huggingface.cloud',
+//   process.env.HUGGINGFACE_API_KEY,
+// );
 
 export const test_gpt = async (text: string) => {
   const TEST_PROMPT =
@@ -32,7 +37,8 @@ export const test_gpt = async (text: string) => {
           {
             text,
           },
-          'openai',
+          'huggingface',
+          hfModels.stablebeluga13B,
         );
         console.log('RESPONSE internal: ', response);
         return response.text;
@@ -134,6 +140,23 @@ export const run = async () => {
   const startTime = Date.now();
   console.log('process.cwd()', process.cwd());
   await run();
+
+  // async function query(data) {
+  //   const response = await fetch(
+  //     "https://api-inference.huggingface.co/models/stabilityai/StableBeluga-7B",
+  //     {
+  //       headers: { Authorization: "Bearer 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" },
+  //       method: "POST",
+  //       body: JSON.stringify(data),
+  //     }
+  //   );
+  //   const result = await response.json();
+  //   return result;
+  // }
+  
+  // query({ "inputs": "Can you please let us know more details about your ", options: { "wait_for_model": true } }).then((response) => {
+  //   console.log(JSON.stringify(response));
+  // });
 
   const endTime = Date.now();
 
