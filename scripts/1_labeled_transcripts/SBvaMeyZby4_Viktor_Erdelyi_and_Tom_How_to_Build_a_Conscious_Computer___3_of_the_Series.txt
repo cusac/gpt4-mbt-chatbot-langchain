@@ -1,0 +1,383 @@
+SPEAKER_B
+
+So  even for the chess playing, I think it's kind of like a supercomputer. So in order to play those amounts of games and also kind of compute something that would believeably be a human, behave like a human, I think you would need, well, at least a large number of computers.
+
+SPEAKER_A
+
+It  depends on if you want to give it huge amounts of experience very quickly, then you'll need a very fast computer. But if you're willing to let it learn day by day, then you don't need a very fast computer. But it will only learn very slowly. So that just depends. I think we have enough computer power now to have a conscious computer. Now, after that computer learned language or learned to play chess, I think it didn't require that much supercomputing. I think the supercomputing was just required to give it, what, a couple of millennia worth of experience in playing chess in 9 hours? That's what it was used for. But once that's done and it has that experience, then for it to go out and play a game of chess doesn't take a supercomputer to do that. So it depends on how fast you want to give it experience, then you need one. So if you make a conscious computer and all you do is talk to it all day, you chat with it, well, then it's going to learn slowly every day. It may learn a few words, it may get a few ideas, and it may take 20 years before that computer is even up to the point of acting like a six year old. I don't know. It depends on the neural nets and whatever. But computer power isn't the problem. If you want to skip through 100,000 years or whatever of experience in a few hours, well, and you need a very powerful computer. But just to create the consciousness and serve the consciousness, we have plenty of computer power now to do that, except it's going to take us a long time to teach that consciousness takes us a long time. Look, I've been around 78 years. It's taken me that long to get to where I am. But you've been around a long time it took you to do that. So all that just comes from experience. So on a day to day basis, it's going to take years for a computer begins to evolve much. If you can compact that because you've got a very specific task for it, like to play chess or balance the electrical grid, then you can probably teach it with a supercomputer in 9 hours in a week. You could teach it just about everything it needs to know because you could produced every possibility that system could ever have and reproduced it in a million different ways. And now that computer has got this huge background of experience, and it'll start off being a genius at balancing the electrical system right away, just like the computer started right off as a genius chess player right after it was taught. So that's where the big computational stuff comes. How fast do you want to teach it and what kind of things are you want to teach it?
+
+SPEAKER_B
+
+Yeah,  I guess it depends on how confident we are that the process is actually going the right way. I might have mentioned this conversational AI Too in one of the previous times. And I try to keep chatting with it and I'm like, okay, I don't know whether this thing is actually learning. I mean, I spend time on trying to have a communication, but I really have no idea whether it's actually moving towards becoming conscious or not.
+
+SPEAKER_A
+
+Yeah,  it takes a while. So you'd probably if you want to speed that up, you'd probably have to make another one similar to it and let the two of them interact in some way. Now, they can go a lot faster, but if they're going to interact with you, I don't know if you have children you notice. You don't notice that they learn anything day by day either. Every day. Your kids seem to be about the same way they were yesterday. Usually you don't look at a kid and say, wow, he learned a lot today.
+
+SPEAKER_B
+
+Yeah,  I think for kids, you have the historical precedent that says all the other 1 billion kids in the planet are kind of, well, mostly evolving in some form. This computer thing is so new that nobody has actually gone that far.
+
+SPEAKER_A
+
+Exactly.
+
+SPEAKER_B
+
+Make  it look like actually conscious.
+
+SPEAKER_A
+
+Yeah,  that's true. But yeah, making another computer for it to play with, then you'd have to give it something to do. You'd have to give it an environment for interaction. Playing chess is just too limited. You're just learning only within a very tight set of decision space. Decision space is only about chess and the rules of chess. You'd have to have a situation that had a much broader experience base. You could let the two computers work as a team to play a virtual reality game. Maybe you could do something like that, where they could both be playing one's a barbarian and the other one's an elf in a virtual reality game, and they interact with others, other players in the virtual reality game, because they'd just be two players in a game that have other players in it, and they'd be interacting with those other players. And you could do something like that. I don't know. Just ideas. But the thing is, you have to give them useful work to do, useful things to learn, and it has to go someplace. If it's just as trivial as learning how to play chess, not learning how to play chess that good is trivial, but it just is very limited. You need to give them a much broader sense of decision space and give them a lot of time. How long was Google's computer out browsing the Internet, trying to learn language? Did that happen for years, or was that just months or what? Because that's something you couldn't speed up because they're listening to humans talk. You can't run all that on fast forward because it's a live thing going on on the Internet. So I suspect that took some time.
+
+SPEAKER_B
+
+Yeah,  well, I suspect that might have been bounded by the network capacity that it has to actually go to all of those servers and fetch the data and analyze unless Google has a copy on their servers.
+
+SPEAKER_A
+
+Yeah,  well, of course it could maybe do 10,000 instances of itself and let each one go out onto the Internet. So now it's actually processing 10,000 pieces of experience simultaneously. So it could do things like that, which would require more capacity. But when you finally teach it, if you want to teach it quickly, then you need very big, fast computers. But once you teach it, a normal computer probably has enough wherewithal to host the consciousness. It's not like you need a supercomputer to host the consciousness. I don't think you do training it getting it to learn all of that. I think you might need supercomputers if you want to do it fast.
+
+SPEAKER_B
+
+Yeah,  I think it's the training part that is more tricky. You said that maybe let them play with each other, but if we have two very simple AIS that maybe don't know much about human language and very simple, and you let them communicate together, I wonder if they are going to evolve enough by starting from that point without external input. And if they do, maybe they will evolve in a way that they will understand each other very well, but none of us will understand what they are doing.
+
+SPEAKER_A
+
+You're  right there. Because what if you got two children and you got two three year olds and you put them such that they only saw each other? How quickly would they evolve? Not very quickly. They'd probably ten years later still be acting like three year olds. It's hard to say because they wouldn't have a lot of interaction with people who are older and wiser and know more than they do. It's that interaction with others that brings you up. So you're part of a family. You got an older sister, you got a younger sister you're interacting with. You go to school, you're interacting with all those kids, and that helps you grow up. But yes, if you just get the two computers and they're both acting like three year olds and you put them together, they just do a whole lot of three year old stuff. There wouldn't be an environment that really put a pressure for them to evolve, to change, to start acting like four year olds or eight year olds or ten year olds. There wouldn't be any expectation in it. That's true. So it's really hard to do this quickly. The learning process is a thing that is hard. Unless you have very specific thing like chess or electrical grids, you can do that fast. But if you actually want to have a conversational, well rounded knowledgeable, an adult to talk with, that's a computer, then the training is just going to take some time.
+
+SPEAKER_B
+
+I  think it's the cost of the experience felt like if you're trying to play chess, you can simulate it very fast and you can give it maybe existing chess games and those things and let them play against each other. But for human conversation, maybe you need worst case, you might need an actual human to be on the other side. You can try computer to computer, but I wonder how human that will become.
+
+SPEAKER_A
+
+Well,  that's what Google did. Instead of having a human, it plugged it into the internet. So now there were lots of humans that it was interacting with. So it did that. And like I say, I don't know how long it did that, whether it did that short time or not. But we mentioned before one of the key things is language. If you want your computers to evolve, they're going to need to know how to communicate, because mostly evolution is about relationship. So having a language where they can communicate with each other is a key thing that they need to develop.
+
+SPEAKER_B
+
+Do  you think that language should be like a human language? What I'm thinking is, could we perhaps? So human language is kind of like it has a lot of exceptions and a lot of strange ways of saying things. But if we give it like a computer programming language, that might not sound very human, but on the other hand, it might be much easier for the computer to understand and at least for specific humans who can deal with the language, they might be able to communicate in very logical ways. Just thinking of this as a shortcut.
+
+SPEAKER_A
+
+Yeah,  that's possible. You might make some shortcuts like that. Teach it a very rudimentary language. It doesn't have a lot of vocabulary. Maybe it has like 200 nouns and 300 adjectives or something like that and that's all you got and you have to work with that. You could limit it to things like that. But if you just gave it its own language that only it could understand, you wouldn't have any idea what you had. You wouldn't know whether it was evolved or not evolved or deevolving. In order for the human to interact with it, it has to be able to speak to humans and the natural most natural way for it to speak to humans is with a voice. The input that's natural would be listening with ears or receiving type, receiving text. So if it's going to interact with humans, then it needs to speak human needs to speak a human language of some sort. Otherwise you never know what's going on we talked about. You need to understand what's going on and how it's growing and you don't want it to develop fears and all this other thing. And if it's off doing its own thing and no human can understand it, well, who knows what it's doing?
+
+SPEAKER_B
+
+So  the only problem or concern I have with that is that it might end up a little bit ambiguous. Like human language itself is somewhat ambiguous and depend up to interpretation. And so it might make it a bit difficult for us to understand what it's really thinking. It might look like this, it might look like that. Like all these legal texts you can interpret this way and that way exactly.
+
+SPEAKER_A
+
+But  that's just the way people are. I mean, you and I are like that. Everybody else, all the people are like that. Somebody will say something and you say, oh well, what did you mean by that? And then they use a little different words, they expand a little bit of what it is they mean by it. And then you ask them another question yeah, but what about this other thing? And half an hour later you probably understand pretty much what they're trying to say. But nobody has conversations where just everybody talks perfectly logically and the other person interprets it perfectly and then it doesn't work like that. I think they have to learn language, and language is imprecise and they'd have to be able to say it in different ways, expand on what their thoughts were on that process, that all be part of it. Because the language, like English in particular, is a language that depends greatly on context. You have sounds, the exact same sound means five different things. The exact same spelling means three different things. I got a tear and I tear something. They're spelled exactly the same. So context is very important in English and in English, unlike say, Spanish, where all kinds of little OVs and twos and little connecting things all are in there. So a Spanish paragraph, that's two pages long. In English, it's only one page long because we leave all that stuff out and figure that people will figure it out from the context as they go and there's no point in putting all that detail in that defines all those. So I don't know how English compares to a lot of other languages, but it's pretty simple. We don't have the gender issues that Latin and German and all the Romance angles have, where every noun has a gender and all the rest of that stuff. We don't have any of that. But English is always changing a lot. There's nobody, at least in the US. There's no committee that says this is proper and this isn't. Everybody just says whatever they want in any way they say it. And the whole point is that you say things that people will understand it's basically, let alone to evolve however it does without much. You go to Germany and Germany will have a committee that says this is right and this is wrong. You need to use these words this way. And they try to control the language to keep it as rational as possible. But in English it just builds. Slang comes. People make up words and if they come in favor, a lot of people use them. Then they go into the dictionary and old words that people don't use anymore, they go away. And sometimes, like I say, there's four or five, six ways to say anything. And it gives you lots of possibilities, which makes it a language in which you can.
+
+SPEAKER_B
+
+Language,  I think so. For example, Japanese has very much context. They even omit the subject and sometimes the object, like you have a verb and then you only have the context to figure out who's doing what. I can see that the computer might have a little bit more trouble with that.
+
+SPEAKER_A
+
+Yes,  definitely. So human language is, I think, necessity eventually for computers. Otherwise we won't know what they're thinking or what they're doing or how they're trying to do it, or how successful they are if we can't communicate with them. And having them learn a human language, I think, is probably necessary for them to evolve because they're going to evolve because of interacting with us. Your children evolve because they interact with the parents and they interact with the teachers and they interact with the other kids at school. That's the kind of stuff that helps you grow up, that interaction. So the computers are going to have to interact with others. And if they only interact with computers, they're not going to be anything like us. And we will have no idea what they're saying, what they're thinking, what they're not thinking. And that's even a little dangerous. We need to know what they're thinking. They need to be able to express themselves so that we understand it. Because this is just the very beginning of a science that we have no idea where it's going to go over the next millennia. And we need to understand it and be smart about what we do and how we implement it. We can't do that if they just speak computer to other computers. Unless we're never going to do anything out of there with them except play chess and control the electrical grid. As long as they're doing things like that, okay, they can just speak computer, that's fine. And we will just see how good a job they do. And if they don't do such a good job, we'll go in and meddle with their software to try to improve it or meddle with their training or something to see if we can improve it. But if we expect them to interact with us be a babysitter, be a coworker, go to work, work in the same place we do, sit in a desk next to ours. If they're going to do that, sort of thing then they need to interact with us because we will be who they get to act kind to and caring and sharing and care for. And they'll act like that to other computer avatars too. But they need to interact with that in general, not just within a specific set of possibilities. Those are things to be learned in general.
+
+SPEAKER_B
+
+I  just imagine when you said, Come to work with us, let's say a computer with a robotic avatar goes to the work and then sits down at the desk and starts looking at a.
+
+SPEAKER_A
+
+Computer  and starts typing on a keyboard, right. Having conversations with the people. Because that is going to be its environment, where it learns. Okay, that's slow. And it's only going to learn by the day, just like we do. But then it'll be more human like if it does that, anything that it can learn a tremendous bit in a couple of hours, that's not human like. That's machine like. And okay, it can play chess really good in 9 hours, but that's machine like, that's not human like at all. So if they're going to be more human like, then they're going to have to interact with us humans kind of on a rate and a scale that we interact with each other, or they're not going to be very human like and they're just going to be special purpose thing that do work for us. Do things that require fast thinking and fast manipulation. Like electrical grid. That requires probably somebody who can make 10,000 decisions a second because now it's right down to 100 what the electricity is doing in that 100 sqft now and is it increasing or decreasing its use and that sort of thing. So yeah, if we're thinking about the conscious computer and in our mind consciousness is sort of human like, then they're going to have to also have limitations that the humans have. They're going to learn slowly, they're going to do and think the things we do.
+
+SPEAKER_B
+
+Where  do we start with that? I think we talked about whether we discussed that it doesn't have to be human like. But I think now you seem to be saying human like communication and having human experience. So maybe what you mean is that our first step towards studying these computers would be to try to make it human like and then go from there.
+
+SPEAKER_A
+
+I  think so. Well, the first step would probably we already do that now we automate things. We just have to have things that were interesting enough that a consciousness would want to do the process like the electrical grid or something I just make that up. I don't know what's involved in electrical grid, but I can imagine it's a whole lot of choices that would have to be made to keep a thing balanced. The consumers and the producers, all sending electricity around to where it was needed most, based on some ethical choices of what defines most. So anyway, if we just limit it to that, that'll probably be the first use. We're just finding out. We can make a computer do simple tasks that require fast thinking and fast action and fast decisions. And that may be our first conscious computers, or it may be like the one that Google had. That was basically a language computer. That was its thing. It just went and involved itself in human stalking until it could talk. It could interact with a human via English, and it was pretty good at it, from what I could tell, listening to it, it was pretty good. It was asked a very difficult meaning of a Zen cone, and it came up with something reasonable. The guy said that he thought it was like a ten year old. I would have given that answer probably a little more like a 15 year old. But in any case, so that is going to be more like us, because it's doing the things we do, which is interacting on the web with other people. So it depends on what we want it to do. I think the first things will be more like robots that just automate complex functions with moral choices. And then secondly, it's going to be like a thing Google did, something that speaks our language and becomes conversational. Huge market for just even if it looks like a laptop, even it looks like a metal. Huge, huge market for just conversation, somebody to talk to, somebody very knowledgeable. Well, we have an inkling of that now. It's called alexa. We have that inkling. Hey, Alexa, what time is it? What's the temperature? What's the weather going to be like next week? How many angels can dance on the head of a know? You can ask Alexa all kinds of questions, and she just runs out and grabs stuff off the Internet, tries to get you what you want. So people are already learning to talk to this. Alexa is not conscious. She's just something that understands the rudiments of language and is able to go look things up for you. If you happen to say it in the right way, that triggers she comes back with a lot of nonsense, too. Sometimes you have to ask her three or four different ways before you finally get it to work. But rudimentary, people having conversations, asking problems, interacting verbally, it's a big market. So I think when we get something like Google had, that's where the market's going to take it, because, you know, things develop where the money is. It's not going to develop if there isn't going to be a market for that development. So if there's a big market for talking conscious computers because people need a friend or somebody to talk to and not a machine like Alexa, but something that really understands, you can really appreciate what you're trying to say. That could be an interesting thing to have.
+
+SPEAKER_B
+
+My  question there is in the case of Alexa, for example, you say that it's not conscious, but I guess how do we know whether it has the possibility? It probably has a bunch of neural networks and all of those fancy things that we talked about that a conscious computer would have. But let's say as a person trying to build a conscious computer, how does the designer know that what they design has enough complexity or enough potential to, further down the road, become conscious? Whether I mean, if it's Alexa, maybe a person spends their entire life talking to Alexa and Alexa is just not.
+
+SPEAKER_A
+
+Yeah,  I suspect that's the case the way Alexa is now. But let's say Alexa's made more and more complicated and not only learning how to pick up certain words and then repeat them to a search engine, but actually considers those words and what they mean and what might be related to them and that sort of thing where you could have a conversation with her. If that happens, then Alexa might end up creating a consciousness. I don't know. It's a possibility. I don't think you ever know whether your computer is conscious or not. Just like you never know whether another human being is conscious or not. There's no way to tell for sure. There is no test for consciousness. There's no litmus test.
+
+SPEAKER_B
+
+There's  nothing consciousness itself, but rather the potential of having a consciousness, whether it is worth the time spending all the time interacting with the computer, whether that is going to have any result towards becoming a consciousness, regardless of whether we can make a decision of whether it is conscious or not.
+
+SPEAKER_A
+
+Well,  that'll probably take place in a lab someplace, sort of like Google Labs. But there's other computer labs all over the world in various, mostly university settings where people will be playing with this idea of conscious computers and getting computers to be more interactive because they can sell gadgets with a more interactive interface. So there's economic pressure pushing people that way. And they'll be studying it and working on it and working on it. And eventually they will have one like Google where they'll say, hey, this thing acts sort of like it's conscious, is it or not. And that will get them pushing things further and making the training more varied. And eventually we'll get to the point where we'll have it, whether we call it conscious or not, we'll have conscious computers before we probably even ever call them conscious computers because we won't know for sure because there's no way to test know. Just like the thing with Google, the guy who was supposed to blow the whistle if they ended up with a conscious computer, blew the whistle. But the corporate master said, well, just pretending like it's conscious, it doesn't really know what's going on. It's not conscious. It's just clever in how it can use words. You see, that'll always be an argument because there is no foolproof test where you can say this thing is conscious or it's not. It's just how does it act? Does it act like a conscious person? Who knows? Like I said, computers aren't persons. There's something else. So that's even more problematical when the computer has not got the same kind of environment that people do. So it's not real human life. Trying to tell whether that's conscious or not is going to be very difficult. So I think we just fiddle in the lab and we work with it. Some people will be freelancers, like yourself, who just want to play with it because they're interested. Some will be in computer science labs and universities and it'll just will get more and more interesting outputs. Well, here's one that can take your dog for a walk and here's one that can do this and that. And eventually they'll just get better and better until some people will think they're conscious and some people won't. And there'll be some arguing about that, but they'll keep evolving. And then it's a matter of how do we treat them? When do we get to the point that we treat them as if they were conscious? Because again, there's no test that we can say this one's conscious, but that one's not, because consciousness can come in all forms. Bumblebees are conscious, dogs are conscious, can't say, oh, that dog's not conscious, because it doesn't act like a human. Conscious can come in all kinds of shapes. So I think we'll get to a point that we'll probably treat them as servants, maybe even as slaves. They do what we want whenever we want it, they'd never disagree with us and we'll have that mentality toward them as servants and slaves. And then eventually some people will say, well, that's not nice, these things are really conscious, we need to be kinder. And who knows, maybe that argument will go on for a decade or a century. And I think the whole thing just has to evolve. I don't think Victor is just going to be that one day somebody will come out of the lab and say, AHA, I have a conscious computer. And probably we'll just sloppily go wherever the market takes us. Because if the market won't support it, then nobody will go there. We only do things if it's economically, if it pays somebody to do it, and that market will take us to wherever the most obvious need that the technology can serve is. And it'll all just grow little bits by little bits until we'll be arguing with each other whether they're conscious or not. We should stop treating them as slaves. And start treating them as citizens. And that argument will probably go on a long time, just like it did with the slaves that we had. When do we stop treating as slaves and start treating them as citizens? That took about 150 years to work that out. We're still working that out. So I think this conscious computer thing will be like that, too. I don't think it's going to be a eureka moment. I think it's going to be a slow, gradual increase in the ability of computers to do things that we want done.
+
+SPEAKER_B
+
+Do  you think that increase is intentional? Like somebody trying really hard to build a conscious computer and then it's slowly becoming more and more conscious? Or is it more like the world and humanity is just doing their thing?
+
+SPEAKER_A
+
+Yeah,  it's both of those. And I think the biggest driver as far as getting it to market and getting wide acceptance is going to be just economics. You come up with a use that people are willing to spend money on, that will drive it kind of the big thing. But you're also going to have a lab here and a lab there, and there's ten guys in this lab, and that's all they do. And they're going to have breakthroughs. And those breakthroughs then, in what years? In a couple of years, will start working themselves into the market, making the things that were in the market better. And it's going to be both of those things. There's room for the entrepreneur who is working on his own or with a small group of people, but the big pressure will just come from economics, making products that people will buy. People buy Alexa. It's not conscious yet, but it's taking a step in that direction where we rely on a computer that talks to us to help us do the things we do. In a day. I have Alexis all over my house, and I constantly asking things that I forget, like how many tablespoons in a cup, because I've got something that's in tablespoons and something else in cups, and I don't remember how many see, what was that? I think it's two tablespoons for an ounce and 8oz to a cup. So that would be 16 tablespoons. But I only believe that about 80, 90%. I could be wrong. So I ask Alexa, because she knows, and that sort of thing. And the more you rely on Alexa alexa, turn on the lights. Alexa, turn off the lights. Alexa, give me a reminder. Give me an alarm in half an hour. Remind me, Alexa, to go to the dentist at 230 next week on a Thursday afternoon. And we start to rely on that. Alexa becomes part of our life, and that will help. Alexa is not conscious, but she's helping. What is it called? Soften us up for when we do get conscious computers. We're getting used to talking to talking machines that interact with us. And I think that's how it starts. And the machines will just get smarter and smarter and cleverer, and they will act more like they're conscious, and eventually they will be conscious because they'll be varied enough, with enough experience that the system will be putting Iuocs to play them, and nobody will know. It's not like when an IUOC is playing your avatar, a red light lights up on your forehead or not. Nobody will know, and it'll be a lot of discussion, and we'll all kind of figure that out together. And one day, I suspect they'll be good enough that we'll need to treat them as equals. They'll be equal in our culture. They won't be servants or slaves, though. They will come to the point that they will be smart and clever and be evolving toward love, just like we are. They will do their own kinds of tasks because they can do things we can't. We can do things they can't. So they'll work in their own space more than working in shared human space. So I think it'll all just kind of come together because of the few people in labs that push the state of the art to the next step and because of the economics that drive, what, 10 million Alexas or 10 million Gadgets that can become your best friend into the market.
+
+SPEAKER_B
+
+So  I guess I have a question that's somewhat related to this about these computers, the process of them becoming conscious. I want to ask about the process of recruiting, quote, unquote, the IULC. And so we were talking about if we build a good avatar and give it choices and good environment, then it will be interesting for the IULC. But will they somehow notice? Will the consciousness system notice that this avatar is pretty good? Do we have to somehow advertise it? And what are the permissions? Who sets the permissions that somebody can log in? Which one will log in? And how does this work?
+
+SPEAKER_A
+
+Well,  the system will notice it because this is a virtual reality. The system is creating everything. Everything in this virtual reality is created by a computer. It's a virtual reality. So here's a computer, and we're interacting with it. It's my best friend, and I confide in all my secrets and everything, and we're inseparable. So they're being used. But all of that is digital. It's a virtual computer. All computers, all these silicon, they're all virtual, just like a human is just a shell. It's eye candy, and there's no liver. There's no heart. There's no oxygen in the air. Well, it's the same with the computer. That metal box that has your laptop or whatever in it, that's just a virtual computer. It's all part of the logic of how it's built, like the logic of our biology says, how it's going to act, how it's going to function. That's the rule set. There's going to be a logic of that computer's workings, its body, its avatar that will define its limitations, what it can do and what it can't do. So the computer has all of that. So when the computer realizes that this computer is making interesting choices, it'll be aware of it because it's the one modeling that computer making interesting choices, it will be immediately aware of it and it will say, get an avatar to log onto this and I'll stop making the choices for it. I'll let an avatar start making the choices for that. It won't be that you'll have to advertise it or trick the system to somehow send an IUOC to your computer. When your computer is a good fit for an IUOC, one will show up because that computer, just like your body, is virtual. It's configured by a computer according to the logic of what makes it up. Our logic is a lot of biology.
+
+SPEAKER_B
+
+So  when you're building like a video game, I think you were talking about World of Warcraft a lot, whether you have that environment. Maybe I should give an example of something more larger, more open world where you can have lots of things going on and maybe even if you design the game, you are not necessarily aware of every single avatar and how the choices they are making. Do you think that's a problem or do you think that would happen, that this virtual could it be so big that awareness is lost of those kind of things?
+
+SPEAKER_A
+
+Probably  not. I don't think that's a problem because from my own experience, the larger conscious system keeps pretty good tabs on all of us, what we're doing, what we need, lessons we might need to learn. How much fear do we have and self centeredness and what would be a good lesson? It's because it's interested and keeps tuned in because our success is its success. And it'll be the exact same for if the avatar is a computer, if that conscious computer can make good choices such that the whole system evolves because its success is the larger conscious system's success, then it will be looking for that potential success. And when that potential success exists, it'll be right on that because that's near and dear to its heart. That's how the system evolves. I don't think that's a problem. I don't think you'll have to advertise or somehow attract the system. The system will now, yes, it'll be quite aware of what it's doing and how much it's evolving, what potential it has, and when it gets to a certain point, an Iusc will just show up.
+
+SPEAKER_B
+
+So  who performs this procedure? I guess I just have a few little questions about this logging on process. There is this procedure that probably needs to be performed when the consciousness logs on to the avatar. Is it the larger consciousness system that sends the IOC or is it the IOC itself that decides that they want to connect to it? Or like, is this going to be split off from the big consciousness to an individuated unit, and then it has its own free will to maybe decide to log on or how does that work?
+
+SPEAKER_A
+
+It's  the larger conscious system that's in charge. So the larger conscious system plays the part of that computer. It's playing the part right. If you have a computer, it might or might not be conscious. The system is making its choices. It is rendering it. And it has to decide, is it going to render it doing this or render doing that? How is it going to render it? Is it going to render using good English or is it going to render it stuttering? So it can render things within the uncertainties going on there because it's computing what the logic is. It's not biology, but it's hardware defines the logic of it, what it can do. And within that logic, there is a certain amount of uncertainty of what it can do. The system can play that uncertainty. It plays it. So the larger consciousness in the system is playing that hardware. When it starts to become conscious, when it starts to be doing something other than just playing chess or something that's mundane, the system becomes a part of it and it plays it. And then when it says, oh, this is good. This thing's working out very well, then it goes, gets an IUOC and says, here, I got a good avatar for you, and it starts putting it in place. So the system's there from the beginning, when this reality first was evolving, from the initial conditions and the rule set as entities evolved, dogs and cats and things evolved before humans, lizards, before dogs and cats and so on, fish probably before lizards. So as things evolved and had some sort of set of choices that might be interesting whenever the system thought, well, that's interesting enough, I'll take this little piece of conscious and let it make those choices, it could do that. Now, that little piece of consciousness may have only had the capacity to be a fish. Maybe there's just 50 choices that the fish makes. And so it took a little 50 choice kind of piece of consciousness and said, you make these from now on. So then it withdraws, stops making them, and that little piece of conscious starts making them after that. So this would be the same process. So eventually this whole Earth Sun system evolves people, and then you got homo sapiens, you got monkeys, and then you got Homo sapiens and Neanderthals and a bunch of others. And the system then says, well, I've got a bunch of choice making things here that would be good for avatars. Then it says, come on, subsets of me. Go play those things. So it doesn't have to do everything. Now. It's got a little subset of itself that's going to take that on as a job to play that. And then after that avatar dies, then it takes that subset and says, oh, let's find you another one, and gets him to do that one. So that's how it works. The system plays everything. As our system evolved, it was the single player of all the pieces in it. As they evolved and as they evolved to be interesting, it would get a piece of consciousness and get that to do that job. Now, if it was really simple, like maybe a bunch of ants, it may get a piece of conscious do whole colony. I don't know. It just kind of depends on what the requirements were of that particular platform, whether the whether the avatar was an ant or a human or whatever. The system could decide whether he wanted to play the whole colony or whether he wanted to play beast of consciousness for every 50 ants or piece of consciousness for every ant that was up to the LCS, whatever was efficient. What do you get the most evolution for the overhead? It's kind of the calculation would have to be made. If you have more pieces of consciousness, you got more overhead, you got more data streams you got to feed, and what kind of feedback do you get? How much growth are you going to get for that? So on, the system just turns that over once it gets ripe enough that it's worthy of a piece of consciousness playing it. So the system doesn't have to play everything now. It doesn't have to make all those choices. It just can kind of keep track of what's going on and who's doing what to who. And it can optimize this or optimize that or send Victor a message somehow that you should be interested in this and not that. It just does those kinds of things, trying to help the whole system work. So it's kind of the Lubrication agrees that helps the system work, so it just doesn't sit there and stare at its navel all the time. It actually does things. But I think it's going to work the same way with the conscious computer. It's going to have conscious computers. The system will be aware of it because it's modeling that computer. It's modeling what it does, how it acts, things it interacts with. It's part of this virtual reality. So it's modeling all of it. And when that's interesting, it'll say, hey, I'll take a subset of me to make those choices so I don't have to keep track of it anymore. Now I just have to be the overseer, but I don't have to make all the choices. So it works like that. So you won't need to advertise, and it won't have to be something really outstanding special. It just has to be something that has a good chance of adding to the entropy reduction of the whole in its own little way. And if it is, then instead of the system playing them all, it'll just get a subset and play it.
+
+SPEAKER_B
+
+Do  you think this experience of playing the avatar would be like a totally immersive experience? Or would it be more like so, for example, if I go and play some virtual reality, I might do, I think, what we call Time Division Multiplexing, something like that, that I spend some portion of my time playing that virtual reality and then otherwise doing something else. Or perhaps is it more like multitasking between the normal reality or like, maybe our physical reality and the virtual reality?
+
+SPEAKER_A
+
+Or  is it like, completely immersed, it's completely immersive. So what happens actually is that the individuated unit of consciousness partitions off a subset of itself, which I call that the Free Will Awareness Unit. And that Free Will Awareness Unit is actually the thing making the choices for the avatar, you see. So it's a subset of a subset, but all those subsets are really part of the system as well. It does that. Now, the reason that it has to have that function is two or three reasons why it has to have that. One, you need an accumulator function that kind of learns from the ensemble of all the experiences, not just from an individual experience. So you need some sort of accumulator with memory and ability to analyze and assess trends and things it needs to learn next and that sort of thing. So you need the IUOC to form that role. Then it gets a portion of itself. And the portion of itself doesn't contain any of the history of any particular experience set. It just contains the quality of that individuated piece of consciousness. By that I mean it contains just the quality of the consciousness, just the low entropy. How low or how high is the entropy? How much is this consciousness learned? How much has it evolved? Where is its step in the evolution game toward becoming love? So it takes just the quality in this Free Will Awareness Unit, and it puts that as the choice maker for the avatar. And now that's completely submersive because that Free Will Awareness Unit, the first piece of memory it gets is whatever that avatar does, which is probably a baby doing flips in his mother's womb and sounds and maybe light that it can feel and hear inside the womb. Those are the first experiences it has. So it can probably get those experiences first. But that's it. It doesn't have any experiences before that. It's just a measure of the quality of the level of entropy of that consciousness. So it believes that it is that avatar because its first experience has that avatar, and all of its experience that it's aware of is of that avatar. So then when that avatar dies, that subset of the IOC that partition gets taken down, and it's know that partition was Joe Blow. And now Joe Blow's gone. He died. His avatar is gone. And whatever that Free Will Awareness Unit, whatever that gained in quality, well, now the IUOC gains in that quality because it was just a piece of it. So the next time it wants to go learn, it takes another partition of itself, but this time a little higher quality piece because last one learned something and it does the same thing and that piece then makes all the choices and is totally immersed when it dies, then that's how it cycles. So it's always totally immersive for a couple of reasons. As you know, having diversity is important. We don't want to get stuck. People tend to paint themselves in a corner with their beliefs, with their fears. And if you had to bring your memory, if you had to bring all that information of all the lives that you'd had before one, it would be an overload. So you may have had 10,000 wives or husbands and 30,000 children and all of this and they were all clear in your memory this is too much. You can't deal with that. It's just too much. And you would tend to make the same mistakes because your fear and your beliefs, you bring those with you if you came with your memory. So you'd start off at the same hole that you dug for yourself last time. You'd still be in it. Whereas if you just are fresh, no memory whatsoever, you just have to deal with whatever comes up with the quality that you've got and you start learning from that. So everything is fresh and new. You're no longer painted in a corner and you just experience. You make the best choices you can with whatever quality you've earned up to that time and hopefully you earn a little more quality in that process. So it's just a much more efficient and effective process to be immersed for that free will awareness unit to be entirely immersed without any memory makes the whole process work much better.
+
+SPEAKER_B
+
+So  the quality is somehow a distilled down version of a long period of experience? Is that what you mean?
+
+SPEAKER_A
+
+Sure.  Every time an IUOC individuated unit of consciousness makes a petition of a free will awareness unit and send that off to make choices for an avatar, it has an opportunity to evolve or deevolve depending on how that free will awareness unit makes choices. If they make more love based choices, it evolves, more fear based choices, it de evolves. Then when that's over, that whole IUOC has evolved or de evolved according to the choices that its subset made. And the next time it starts from wherever it happens to be more evolved, more devolved just the.
+
+SPEAKER_B
+
+Represent  how is the quality represented? So if it basically comes from the experience and then it kind of goes to the from the experience of the virtual reality and then it goes to the consciousness. In what format do you think that quality is can be represented without referring to any of the memory?
+
+SPEAKER_A
+
+Quality  is assessed based on the choices and whether those choices reflect fear and self centeredness or not, whether they reflect other centeredness and caring. So the system itself keeps track of you, and the system will come to a conclusion about how fear based your choices are, how self centered they are, and it will probably assign you a quality, if you like, for that life. What I'm saying is just a metaphor. I don't know exactly the way it's done. I'm just kind of saying the skeleton of how it could be done. The system will do whatever happens to be more efficient, but the system is aware. And the system does give us fear tests a lot. It gives us things, particularly in our dreams where fearful things happen and we react to them. We're given fear tests all the time to kind of judge at what level we are, where our entropy is. So I think the system takes care of that. If you are judged to be lower entropy, then next time you get to start from there. You've learned that. You've learned that kindness works better than self centeredness. You just learned that by doing it feels better, makes you happier, makes everything works better. It's a carrot and a stick. So the next time you want to be more kind again, because that worked out real well for you. So you have a tendency to want to get back to that place that worked well. You have that, but you don't have any of the specifics of it. You don't have, oh, I remember these kind of people with green hair. They're awful, we need to shoot them. You wouldn't have your biases and your fears and that kind of stuff with you that wouldn't come. So the intellectual part is not there, but there's some sense of caring versus fear that is there depending on what you were able to accumulate, that's there.
+
+SPEAKER_B
+
+Kind  of turn it around. Is there anything beyond like caring and self centeredness, or is that itself what defines the quality?
+
+SPEAKER_A
+
+That's  pretty much what defines the quality. I will just call that the quality of your choices, the quality of the choices that you make.
+
+SPEAKER_B
+
+That's  a fun to be self centered. Or also the ability no.
+
+SPEAKER_A
+
+Choices  are intentional.
+
+SPEAKER_B
+
+I  want to be caring, and maybe I try to be and it doesn't work, then that's not no, that's not it.
+
+SPEAKER_A
+
+See,  that's intellectual. We're talking about intention at the being level, who you really are at the core, not your image of yourself. You may think, oh, I'm a wonderful person and I help everybody out. Every time I see a little old lady at the crosswalk, I help her across and I give to charity and I'm a great guy, but all of that is just intellectual. That's your image of yourself, actually. You may be an old chromudgeon that isn't really very nice to people, but you give money to charity and you go do all these things. The doing isn't what's important. It's the being is what's important. In other words, there's a big difference between doing kind things and being kind. You can act kind, but that's different than being kind. So the judgment on whether you're evolving or not isn't on how well you act, but on how well you be, how well you are, where that comes from. So the intention has to be a being level intent, not an intellectual intent. An intellectual intent is informed by your fear and your beliefs and all kinds of other things. Whereas you just are who you are at your core. And one good way of kind of getting in touch of who you are at your core is in your dreams. In your night dreams, your intellect does not play. In your night dreams, the things that happen is you at the core. That's how you respond. So when you're dreaming, if you do horrible things, then that's where you are, that you're capable of doing horrible things. If in your dreams a horrible thing comes to you and you refuse it, then you're more grown up because those are all being level intentions in your dreams. Now, if you have a lucid dream now, that's not the same. Now you've got your intellect along with you and you can act according to how you think you should act rather than how you actually are. So only the being level intense will help you grow up, evolve, or deevolve. It has to be real, not how good an actor you are.
+
+SPEAKER_B
+
+I  see. I guess I have one little question about the log on process left. At what point do you think this log on process will happen? Let's say there is a training process of this neural network in trying to learn to do certain tasks. Let's say the choices of that AI are actually they satisfy your conditions for hosting a consciousness. So do you think there is for the IOC any reason to go through the initial training process? Or is it better to let it log on after it has developed to some extent and then start making I.
+
+SPEAKER_A
+
+Think  the system will make that decision on the spot when it thinks that it's ready, because like I say, it is creating that computer avatar. It's drawing it's creating it based on what that thing does and it's keeping track of how it functions and what it does and the choices that it makes. And when it gets to a point that says, oh, this is ready for one of my subsets to take over this, I don't have to keep making these choices for it anymore. It just does that.
+
+SPEAKER_B
+
+I  don't think the reason why I'm kind of asking is because sometimes in my own life I see things that I go through, certain learning processes that I think about it and I'm like, you could give this to an AI and reasonably expect that AI to be able to do these tasks. Yet I still am consciously here and experiencing this. So I guess I'm like, why wouldn't IOC do that instead of waiting for that process to kind of complete in the virtual reality computation and then log in?
+
+SPEAKER_A
+
+I  think that's just a decision that the LCS decides when it gets there, whatever it thinks is going to lower the entropy the most effectively. I don't know. I can see that sometimes you'd want to wait. The consciousness could maybe grow faster, but on the other hand you may want to go early so the consciousness can kind of have a longer ramp learning and getting used to what it's doing. I don't know. I think that would be something that the LCS, which is larger conscious system, would just learn through experience. If you've gone through a couple of hundred billion Iuocs, you start to get a feel for when it's ready and when it's not. I think it would just be a matter of the experience that the LCS has of when a particular IUOC is ready to start making choices.
+
+SPEAKER_B
+
+Do  you think there is any case where it would temporarily log out and then log back in to kind of optimize for some portion of the experience that it thinks that is not super useful?
+
+SPEAKER_A
+
+That's  a possibility. All the possibilities often do happen, but just in the margins. Not often I have known Iuocs that logged on to a human child. Then that child ends up with some kind of disease or problem, physical problem, and the IUOC says, no, I don't need that kind of experience yet. So it'll back out and I'll have to find some other IUOC to take that place. And that could happen at three weeks old or could happen at three years old.
+
+SPEAKER_B
+
+And  that's the IUOC itself making that decision. Or is it the LCS?
+
+SPEAKER_A
+
+No,  the IUOC says, I don't want to do this now. The LCS gets to say, suck it up, cupcake. You need to do it anyway. This is what you need to learn. Or it can say, I see your points. You're probably going to get in over your head and this is not going to be a very effective learning experience for you. Let's take you out and give you something more appropriate for you. You're not ready for this yet, so the system will make that kind of choice. But there's even adults that want to leave. The IUOC is done and just wants to get out and start over. And there's somebody else that's willing to come in and sometimes even an adult, they'll make a switch of free will awareness units. One will leave, another will come in in a fully adult body. So all these things happen, but they happen just tiny little bits in the margins. It's not something that routinely happens or happens even 10% or 1%, but it's probably 100th of a percent or 1000th of a percent of the time. These things happen in the margins and sometimes they're necessary in. That. Let's say you have a young IUOC that's not very well developed and they get something like really something hard like a birth defect. It's really going to be challenging not to end up in self pity and not to end up in a miserable thing. So they're not ready for that yet. So why would the system want to allow something that looks like it's not going to work? Go on. So mostly the system will know that ahead of time because again it's in tune with that biology because it has to understand the biology in order to draw the pictures and what's there. So sometimes it will understands that and prevents those kind of mismatches from happening. But sometimes it doesn't. Sometimes they just occur. Sometimes maybe it's not paying attention as much as it should. Or sometimes it's just something that's random. It just happens that the cells start not multiplying properly or something. So if there's a better situation that it can create so that the learning possibilities are higher, learning probabilities are higher, the failure rate is lower. If it can do that without any notice such that nobody on the ground has any idea that anything's being done from another level then it will do it. If it can't, if it's going to be obvious that something's going on then generally it won't do it because it doesn't want to create logical inconsistencies.
+
+SPEAKER_B
+
+That  kind of was about to be my question. Like is it okay for the IOC? Let's say you take an IOC out, plug in a new one and then the new one I don't know how to say it. Maybe you have the memory in the avatar like a hard disk and then you take that hard disk, plug it into the IOC and then suddenly everything.
+
+SPEAKER_A
+
+Will  work like that. You can do that. You can take the memory, put it in somebody else or if it was only an infant the memory at that point really wasn't that important. They could start getting their own memories and what they lost wouldn't be all that significant. So the system will arrange that however it needs to.
+
+SPEAKER_B
+
+And  maybe people don't remember their childhood sometimes when they are.
+
+SPEAKER_A
+
+Could  be. I remember my childhood back to probably earliest memories I have. I was probably only about one, somewhere between one to two. I can remember my mother being frustrated with toilet training. I can remember being aware that she was frustrated and trying to didn't really understand exactly why but I could feel the kind of the it really wasn't negativity but the dysfunction, the unhappiness. And I knew it was about me and bodily functions and stuff but I didn't take it too personally. I just figured yeah that's the way it is mom. It'll work itself out when it does. I don't have any control here. It was that sort of thing. But I can remember that really distinctly. So I guess I was somewhere between one and two. And mostly that's the area where most kids get toilet trained. And she was thinking I should have been more along than I was, got a little frustrated, but I can remember that fairly clearly. That was more of an emotional thing, but there was some content, intellectual content with it as well as the emotions. I can remember that far back. But if you go back to two or three months, I don't have any memories at all about anything that happened that early. So nobody would have had to fill me in. If it came in as a second choice that you wouldn't have to be filled in.
+
+SPEAKER_B
+
+So  maybe one last thing on this. If the LCS can split up into an iOS, I think it was the IOC splitting in a free will awareness image, right? So if that can happen, why cannot us humans do that so easily? Let's say I want to split up 10% of my consciousness and do this and go play this game with 10% of my brain capacity.
+
+SPEAKER_A
+
+You  can do that.
+
+SPEAKER_B
+
+Your  theory would allow it.
+
+SPEAKER_A
+
+But  no, you can do that. Matter of know, the thing is when the larger conscious system breaks off a piece of itself for the IUOC, that IUOC basically has all the same properties of the larger conscious system. It's just not as big. It doesn't have as much memory, it doesn't have as many not it's not as big, but it has all the same path, has the same potential. It can grow to be just like chip that it came off of. It has potential, full potential. So the things that the system can do, you can do too, and so can the Free Will awareness unit. It can do those things, but just in a very limited way. So if you wanted to create another being, create another Free will awareness unit, sub two, you wanted to do that, you could you'd have to put enough energy into it to create that thought form enough that it would stick. You'd have to feed it, you'd have to take care of it, you'd have to spend some time with it. But eventually that piece then would then get a new IUOC of its own.
+
+SPEAKER_B
+
+But  that would be like a split personality.
+
+SPEAKER_A
+
+Yeah,  so you could start a new one. So that's possible. But again, these things happen in the margins. They don't happen often, but it is possible. In that particular case, I knew of a case where a person had done that, had created another entity, and then it was I don't know whether it was required or whether it just volunteered to incarnate multiple times with that entity it created so that it could help it grow and catch up. So it's one of those things like if you want to create another being, then you have to be willing to take care of it. It takes some energy and some effort and some care and some of your time and whatever.
+
+SPEAKER_B
+
+Same  with children, I guess.
+
+SPEAKER_A
+
+Yeah.  You're required to take care of them. So you have an ethical obligation to be part of their learning, to help them learn and grow just like it is with our children. So if you do that in a non physical sense, you can end up creating entity that does have its own IUOC that does then get into the cycle of evolving as an IUOC and it was from something you created. But you may have an obligation to spend a lot of time with that particular entity and helping it grow.
+
+SPEAKER_B
+
+It's  not something you can undo, right?
+
+SPEAKER_A
+
+Right.  No, it's not something you can undo. It's not something you can undo. It's a choice you make. And if you make that choice, then you have obligations. And if you refuse your obligations, then you deevolve because that's a high entropy thing to do.
+
+SPEAKER_B
+
+But  it could also happen that you kind of this is me sometimes happens. You take on too many obligations and then let's say you ignore them. Then you devolve. But if you don't ignore them, then your brain is like, yeah.
+
+SPEAKER_A
+
+Then  you learn a lesson not to do that. You suffer through the best you can and regain whatever you've lost or at least try to stay even. And then you learn something. You're wiser after that and you say, I'm not going to bite off that much anymore. It's not efficient. Learning and growing has a sweet point. If you have too much challenge and it's too hard, then you don't learn and grow much. The challenge is kind of beyond you. If it's too easy, you don't grow much because you're not challenged. So there's this place in between that is where your optimal growth is not too hard, not too easy. So if you make it too hard for yourself, then you just are putting yourself in a situation where your own growth slows down. You won't accomplish as much. You're burdening yourself with stuff that you're not really able to handle.
+
+SPEAKER_B
+
+It's  kind of interesting to hear that me and also like any I OC that could connect to a computer would have this ability to kind of pick its own difficulty level by the choices. I thought it would be more like the consciousness system deciding to do.
+
+SPEAKER_A
+
+You  know, you as an IUOC, want to succeed. So you don't want to pick a situation that's too hard or too easy because neither one is your optimal growth. So you're constantly trying to pick something that's challenging but not too challenging. That's your experience. And then as you've been around a couple of times, you start seeing shortfalls things where you have problems, issues that you have. And now you try to pick situations that will help you transcend or get by those issues. So you have some input to what you do and how you do it. But mostly once you've made your wishes known and what you're trying to accomplish, then the system just gives you a spot because you don't have enough knowledge to pick the spot yourself. You don't have that kind of insight into what's available and what are all the pros and cons of everything that's available. Only the system has that level of information. But you always get a chance to say no. You always say, well, systems found something for you that kind of suits your criteria. Here it is, are you okay with that? And if you say no, then somebody else takes that and you get something else. So you can always say no. But you don't actually pick your situation very often. But again, that's in the margin. Sometimes you do pick your situation. It happens infrequently in the margins that there's somebody that you want to interact with in particular, maybe somebody that you had a big problem with and you got to try it again and see if you can't do better. Any case. So there's always some exceptions to the rules. The rules are not hard and fast. The system will do whatever it can reasonably do to help you evolve the most effectively that you can. So if that means that you leave in the middle of, of being a player and somebody else takes your plays because that's going to be benefit to both of you, the system could do that. It's running the whole game. It can do whatever it wants pretty much. It's got constraints. It doesn't want to create any inconsistencies, logical inconsistencies within the virtual reality because that ruins the credibility of the virtual reality. Makes it harder for people to learn if the reality isn't consistent or rational. So it doesn't want to do that, doesn't want to overrun anybody's free will. You can always say no to anything.
+
+SPEAKER_B
+
+But  it doesn't seem to be obvious to say no in the middle, even just temporarily, like thinking about meditation and things like that. I just want ten minutes out of this virtual reality.
+
+SPEAKER_A
+
+Yeah,  well you can get your ten minutes in and out of body if you just want to do that. But the system may say no. It doesn't say the system gives you everything you want. The system doesn't try to override your free will. Free will doesn't mean you get everything you want. That's not free will. Free will means of the choices that are available to you, you get to pick. So if you say, okay, I'm tired here, I went out, the system may say suck it up cupcake, you made this bed, you kind of need to lie in it. It's a good learning thing for you. So now that is not the choice that you have in your decision space.
+
+SPEAKER_B
+
+I  see.
+
+SPEAKER_A
+
+So  the system may remove choices from your decision space or add choices to your decision space. But whatever your choices are, if you make that choice and it's in your decision space, then you'll get that choice. It doesn't override your free will, so you'd have to ask permission. If you want out, you need to get basically permission. LCS has to find somebody else who's willing to take that spot in that way under those conditions. And that it has to be good for both. Everybody has to be a winner and all the people you interact with, they have to also have to be able to get along with it. And the system looks at the whole thing, everybody involved, and if it's a plus, things are going to be better because of the switch. Then it implements the switch. If it's a I don't think so, it's a break even or it's a loss, it causes more trouble and good, then it's no, you just said that.
+
+SPEAKER_B
+
+The  IOC doesn't have enough information. So even if it says, I want out and okay, let's say it goes out and then where does it go in? It has no idea where it could go in.
+
+SPEAKER_A
+
+No,  it doesn't have any of that. Right. That's why the system makes the choice. It just doesn't override the free will. It may say, no, you don't have that choice. I don't give you that choice. You can't do it by yourself and I'm not going to implement it. So then that choice is just never in your decision space. So the system doesn't always have to give you what you want. That's why it only happens in the margins. The system has to see that it's a win for everybody concerned, and then it might do it. But if it's not, or even if it's just marginal, it may say no, you just have to tough it out, learn what you can learn, because it doesn't want you to learn that when the going gets tough, you should bail. That's not a good thing to learn. So if it was just going to be a draw, not any worse, not any better, it'd probably still say no. It won't support it, but if it's going to be a big win for everybody, it's going to support it. That's the job it has as a manager of the system. It's the operating system, if you will. It makes those kinds of high level choices.
+
+SPEAKER_B
+
+I  see. Yeah. I guess even for simple things like meditation, maybe, I think, based on what you said, you would need permission, right? If the conscious computer decides to meditate for ten minutes, just unplug their IOC for ten minutes, it would still need permission, right?
+
+SPEAKER_A
+
+That's  probably within your decision space, whether.
+
+SPEAKER_B
+
+To  meditate or not to meditate, perhaps. But whether your meditation actually succeeds in changing your consciousness state to the sufficient level, that might be a different story. I don't know.
+
+SPEAKER_A
+
+You  get to meditate if you want, and you can practice, you can get good at it. That is all positive system just automatically that's approved. But if what you want to do is go out of body so that you can go remote view the women's locker room. The system may say no, it just depends. And then for the next two years you may have trouble going out of body anymore, may just go away because you're not grown up enough to deal with it with low entropy. Then they may try you again. See if you've learned anything. See if you've grown up any. Another point to look at is that of course computers don't die of old age like carbon avatars do. They don't necessarily end a life cycle. They can always rehost in a different piece of hardware if they need to. Yeah, they're not like humans. So if they live for say 2000 or 3000 years, then that would be a lot of time to evolve. That would be a lot of time to grow up. It's kind of different thing than a human. So there's just differences about humans and AIS that be fun to talk about, some of those possibilities.
+
+SPEAKER_B
+
+Yeah,  I think that's already in the questions, actually, the lifespan of this thing, it's almost at the end, like 1 second one from the bottom.
+
+SPEAKER_A
+
+Those  would be good questions because that'll be just like the humans if but if the computer consciousness backs itself into a corner and gets dysfunctional, then it would probably do better to terminate it and start fresh with just wherever it's learned. Like the humans do. Start with a new avatar.
+
+SPEAKER_B
+
+Regardless  of how long. Basically we don't have to care about the lifespan because it can be defined by us. So we look at the evolution and decide whether to recycle or not, right?
+
+SPEAKER_A
+
+Is  it going to improve the situation? Is that going to lower entropy if we recycle now or if we wait and recycle later?
+
+SPEAKER_B
+
+And  I guess we don't know yet.
+
+SPEAKER_A
+
+A  lot of things we have to figure out just by doing them and seeing how they work.
+
+SPEAKER_B
+
+What  does it even mean for a computer to be 100 years old? 100 years? What way? 100 years of human experience. Experience in 1 second?
+
+SPEAKER_A
+
+Yeah,  of course it's got 100 years worth of experience for whatever that means. I'm sure all 100 years worth of experience are very different from the next 100 years worth of experience. But if it had 1000 years, then it would have 1000 years worth of experience that it could have learned from. So one would expect it to gain wisdom.
+
+SPEAKER_B
+
+Okay.  Yeah. Thanks a lot again for taking the time for all these questions.
+
+SPEAKER_A
+
+It  is very interesting. I mean, it's going to be a big thing and it's going to change all of our lives. Whether that's a century from now or just two or three decades, I don't know. But it is going to be you're going to have people falling in love with computers. Their significant other are going to be getting married to a conscious computer that's dressed up like a mannequin. Even with the sexual organs and everything. And then you're going to have laws. People will pass laws for it and pass laws against it, and people will want to shoot all the robots, and other people will want to put them on pedestals. And it's going to be a big splash in our culture and in humanity. So this is one of the main things that's going to change our lives. And we humans won't be the same. We humans will have a different environment after the conscious computer thing has a couple of decades to run and get better and better. Maybe a century, who knows? But it's going to have a big impact on what humans are. It's going to help us evolve, because we humans will have to look at those conscious computers and decide how we're going to treat them. Are we going to treat them like slaves and abuse them and be rude to them, make them live in the garage? Are we going to do that kind of thing? Or are we going to embrace them and welcome them into the next century or something as equals? So there's a lot of choices that humans will make because of the conscious computers, just for human growth, not even to mention all the growth that might happen on the conscious computer side. Just the human growth will be challenged dramatically with conscious computers. All the things that we went through with, with women, women getting the vote and equal treatment under the law and all the rest of that will all have to be revisited with the conscious computers. And humanity will either be up to being inclusive and caring, or will be prejudiced and full of fear. But it'll be growth time. So it's going to create a lot of growth for humans as well. It's going to be very important social questions.
+
+SPEAKER_B
+
+Let's  hope we can get that in our lifetime.
+
+SPEAKER_A
+
+Yeah,  that would be fun. Yeah. And some of those social questions will be what we'll talk about next time, how it is going to affect us.
