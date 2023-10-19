@@ -1,7 +1,7 @@
 import { PromptTemplate } from 'langchain/prompts';
 import { callChain, getGlobalTokenCount } from './0_utils';
 
-import { HfInferenceEndpoint } from '@huggingface/inference';
+// import { HfInferenceEndpoint } from '@huggingface/inference';
 
 export const hfModels = {
   'stablebeluga13B': 'https://whe8au64pb8fky7p.us-east-1.aws.endpoints.huggingface.cloud',
@@ -15,30 +15,23 @@ export const hfModels = {
 
 export const test_gpt = async (text: string) => {
   const TEST_PROMPT =
-    PromptTemplate.fromTemplate(`Rephrase the following statement with sarcastic humor:
-
-    ---
-    {text}
-    ---
-  `);
+    PromptTemplate.fromTemplate(`Summary:\n\n###\nNone: this is the beginning of the conversation.\n###\n\nQuestioner:\n\n###\nWhat is an IUOC?\n###\n\nAgent:\n\n###\n`);
 
   try {
-    let maxTokens = 1500;
+    let maxTokens = 500;
     let tokenReduction = 0.1;
     const testPrompt = await TEST_PROMPT.format({
       text,
     });
-    console.log('TEST PROMPT: \n\n', testPrompt, '\n\n\n');
+    // console.log('TEST PROMPT: \n\n', testPrompt, '\n\n\n');
     while (true) {
       try {
         const response = await callChain(
           TEST_PROMPT,
           maxTokens,
-          {
-            text,
-          },
-          'huggingface',
-          hfModels.stablebeluga13B,
+          {},
+          'openai',
+          'davinci:ft-lightning-strike-books-2023-09-01-03-08-48',
         );
         console.log('RESPONSE internal: ', response);
         return response.text;

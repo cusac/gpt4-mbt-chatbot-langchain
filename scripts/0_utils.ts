@@ -23,7 +23,7 @@ import {
 
 import { ChatOpenAI } from "langchain/chat_models"
 
-import { HfInferenceEndpoint } from '@huggingface/inference';
+// import { HfInferenceEndpoint } from '@huggingface/inference';
 
 let globalTokenCount = 0;
 
@@ -2190,31 +2190,31 @@ export const callChain = async (
   let response: any = null;
 
   if (providerName === 'huggingface') {
-    modelName =
-      modelName ||
-      hfModels.stablebeluga13B;
+    // modelName =
+    //   modelName ||
+    //   hfModels.stablebeluga13B;
 
-    const hf = new HfInferenceEndpoint(
-      modelName,
-      process.env.HUGGINGFACE_API_KEY,
-    );
+    // const hf = new HfInferenceEndpoint(
+    //   modelName,
+    //   process.env.HUGGINGFACE_API_KEY,
+    // );
 
-    const gen_kwargs = {
-      max_new_tokens: 488,
-      top_k: 30,
-      top_p: 0.9,
-      temperature: 0.2,
-      repetition_penalty: 1.02,
-      stop_sequences: ['\nUser:', '<|endoftext|>', '</s>'],
-    };
+    // const gen_kwargs = {
+    //   max_new_tokens: 488,
+    //   top_k: 30,
+    //   top_p: 0.9,
+    //   temperature: 0.2,
+    //   repetition_penalty: 1.02,
+    //   stop_sequences: ['\nUser:', '<|endoftext|>', '</s>'],
+    // };
 
-    response = await hf.textGeneration({
-      inputs: fullPrompt,
-      parameters: gen_kwargs,
-    });
-    if (response.generated_text) {
-      response.text = response.generated_text;
-    }
+    // response = await hf.textGeneration({
+    //   inputs: fullPrompt,
+    //   parameters: gen_kwargs,
+    // });
+    // if (response.generated_text) {
+    //   response.text = response.generated_text;
+    // }
   } else if (providerName === 'openai') {
     modelName = modelName || 'gpt-3.5-turbo';
 
@@ -2261,31 +2261,31 @@ export const callChatChain = async (
   let response: any = null;
 
   if (providerName === 'huggingface') {
-    modelName =
-      modelName ||
-      hfModels.stablebeluga13B;
+    // modelName =
+    //   modelName ||
+    //   hfModels.stablebeluga13B;
 
-    const hf = new HfInferenceEndpoint(
-      modelName,
-      process.env.HUGGINGFACE_API_KEY,
-    );
+    // const hf = new HfInferenceEndpoint(
+    //   modelName,
+    //   process.env.HUGGINGFACE_API_KEY,
+    // );
 
-    const gen_kwargs = {
-      max_new_tokens: 488,
-      top_k: 30,
-      top_p: 0.9,
-      temperature: 0.2,
-      repetition_penalty: 1.02,
-      stop_sequences: ['\nUser:', '<|endoftext|>', '</s>'],
-    };
+    // const gen_kwargs = {
+    //   max_new_tokens: 488,
+    //   top_k: 30,
+    //   top_p: 0.9,
+    //   temperature: 0.2,
+    //   repetition_penalty: 1.02,
+    //   stop_sequences: ['\nUser:', '<|endoftext|>', '</s>'],
+    // };
 
-    response = await hf.textGeneration({
-      inputs: fullPrompt,
-      parameters: gen_kwargs,
-    });
-    if (response.generated_text) {
-      response.text = response.generated_text;
-    }
+    // response = await hf.textGeneration({
+    //   inputs: fullPrompt,
+    //   parameters: gen_kwargs,
+    // });
+    // if (response.generated_text) {
+    //   response.text = response.generated_text;
+    // }
   } else if (providerName === 'openai') {
     modelName = modelName || 'gpt-3.5-turbo';
 
