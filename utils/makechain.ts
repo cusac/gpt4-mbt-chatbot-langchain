@@ -7,6 +7,7 @@ import { CallbackManager } from 'langchain/callbacks';
 const AI_NAME = 'AI Guy';
 const NUMBER_OF_REFERENCES = 4;
 const ALLOWED_MODELS = ['gpt-3.5-turbo', 'gpt-4'];
+const ORGANIZATION_ID = process.env.ORGANIZATION_ID || '';
 
 // TODO: provide a wrapper to call chains that tracks token usage and handles maxToken errors
 
@@ -199,7 +200,7 @@ export const evalQuestionChain = () => {
         modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
         // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
       },
-      { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+      { organization: ORGANIZATION_ID },
     ),
     prompt: SOURCE_DOC_EVAL_PROMPT_GPT3,
   });
@@ -213,7 +214,7 @@ const summaryChain = () => {
         modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
         // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
       },
-      { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+      { organization: ORGANIZATION_ID },
     ),
     prompt: SUMMARIZE_PROMPT_GPT3,
   });
@@ -271,7 +272,7 @@ export const makeChain = (
         modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
         // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
       },
-      { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+      { organization: ORGANIZATION_ID },
     ),
     prompt: CONDENSE_PROMPT_GPT3,
   });
@@ -303,7 +304,7 @@ export const makeChain = (
             })
           : undefined,
       },
-      { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+      { organization: ORGANIZATION_ID },
     ),
     prompt: QA_PROMPT_WITH_SUMMARY_GPT4,
   });

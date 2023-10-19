@@ -6,6 +6,8 @@ import { OpenAI } from 'langchain/llms/openai';
 import { LLMChain } from 'langchain/chains';
 import { PromptTemplate } from 'langchain/prompts';
 
+const ORGANIZATION_ID = process.env.ORGANIZATION_ID || '';
+
 // Function that removes all characters before the first '['
 const removeTextBeforeFirstBracket = (text: string) => {
   const firstBracketIndex = text.indexOf('[');
@@ -41,7 +43,7 @@ const improveQAJson = async (qaJson: any) => {
     //@ts-ignore
     llm: new OpenAI(
       { temperature: 0, maxTokens: 2500, modelName: 'text-davinci' },
-      { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+      { organization: ORGANIZATION_ID },
     ),
     prompt: QA_REVISE_PROMPT,
   });
@@ -182,7 +184,7 @@ If the conversation doesn't naturally contain questions and answers, infer them 
     const qaChain = new LLMChain({
       llm: new OpenAI(
         { temperature: 0, maxTokens: 2500, modelName: 'gpt-3.5-turbo' },
-        { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+        { organization: ORGANIZATION_ID },
       ),
       prompt: QA_PROMPT,
     });

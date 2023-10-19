@@ -28,6 +28,9 @@ import { HfInferenceEndpoint } from '@huggingface/inference';
 let globalTokenCount = 0;
 
 
+const ORGANIZATION_ID = process.env.ORGANIZATION_ID || '';
+
+
 export const hfModels = {
   'stablebeluga13B': 'https://whe8au64pb8fky7p.us-east-1.aws.endpoints.huggingface.cloud',
   'vicuna13B': 'https://oobkevgy9bub2kft.us-east-1.aws.endpoints.huggingface.cloud',
@@ -2217,8 +2220,8 @@ export const callChain = async (
 
     const chain = new LLMChain({
       llm: new OpenAI(
-        { temperature: 0, maxTokens, modelName },
-        { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+        { temperature: 0, maxTokens, modelName, stop: ["\n###"] },
+        { organization: ORGANIZATION_ID },
       ),
       prompt,
     });
@@ -2288,7 +2291,7 @@ export const callChatChain = async (
 
     const chat = new ChatOpenAI(
       { temperature: 0, maxTokens, modelName },
-      { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
+      { organization: ORGANIZATION_ID },
     );
 
     const chain = new LLMChain({
