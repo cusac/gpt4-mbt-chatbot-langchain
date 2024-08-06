@@ -181,7 +181,7 @@ If the conversation doesn't naturally contain questions and answers, infer them 
 
     const qaChain = new LLMChain({
       llm: new OpenAI(
-        { temperature: 0, maxTokens: 2500, modelName: 'gpt-3.5-turbo' },
+        { temperature: 0, maxTokens: 2500, modelName: 'gpt-4o-mini' },
         { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
       ),
       prompt: QA_PROMPT,

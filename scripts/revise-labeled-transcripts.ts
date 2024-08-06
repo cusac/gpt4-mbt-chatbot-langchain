@@ -176,7 +176,7 @@ const generateLabeledTranscript = async (speaker_descriptions: any, text: string
 
     const labelChain = new LLMChain({
       llm: new OpenAI(
-        { temperature: 0, maxTokens: 1500, modelName: 'gpt-3.5-turbo' },
+        { temperature: 0, maxTokens: 1500, modelName: 'gpt-4o-mini' },
         { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
       ),
       prompt: LABEL_PROMPT,

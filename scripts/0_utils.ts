@@ -1387,7 +1387,7 @@ export const callChain = async (
 
   const chain = new LLMChain({
     llm: new OpenAI(
-      { temperature: 0, maxTokens, modelName: 'gpt-3.5-turbo' },
+      { temperature: 0, maxTokens, modelName: 'gpt-4o-mini' },
       { organization: 'org-0lR0mqZeR2oqqwVbRyeMhmrC' },
     ),
     prompt,
