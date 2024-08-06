@@ -13,9 +13,11 @@ let pubnub = new PubNub({
   userId: 'myUniqueUserId',
 });
 
+const CURRENT_ENV = process.env.NEXT_PUBLIC_ENV || 'development';
+
 let THROTTLE: number = 1;
 
-if (process.env.NEXT_PUBLIC_ENV === 'production') {
+if (CURRENT_ENV === 'production') {
   THROTTLE = 10;
 }
 
@@ -70,7 +72,7 @@ export default async function handler(
   let count = 1;
 
   const sendData = (data: string) => {
-    if (process.env.NEXT_PUBLIC_ENV === 'development') {
+    if (CURRENT_ENV === 'development') {
       res.write(`data: ${data}\n\n`);
     } else {
       let dataJSON;
@@ -146,7 +148,7 @@ export default async function handler(
     sendData(JSON.stringify({ data: '[DONE MESSAGES]' }));
     flushMessages();
 
-    if (process.env.NEXT_PUBLIC_ENV === 'production') {
+    if (CURRENT_ENV === 'production') {
       await waitForDoneMessages();
     }
 

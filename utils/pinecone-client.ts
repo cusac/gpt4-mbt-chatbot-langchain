@@ -13,6 +13,7 @@ async function initPinecone() {
       apiKey: process.env.PINECONE_API_KEY ?? '',
     });
 
+    console.log("Pinecone client initialized");
     return pinecone;
   } catch (error) {
     console.log('error', error);
