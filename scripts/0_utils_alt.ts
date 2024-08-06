@@ -2325,7 +2325,7 @@ export const callChain = async (
     //   response.text = response.generated_text;
     // }
   } else if (providerName === 'openai') {
-    modelName = modelName || 'gpt-3.5-turbo';
+    modelName = modelName || 'gpt-4o-mini';
 
     const chain = new LLMChain({
       llm: new OpenAI(
@@ -2393,7 +2393,7 @@ export const callChatChain = async (
     //   response.text = response.generated_text;
     // }
   } else if (providerName === 'openai') {
-    modelName = modelName || 'gpt-3.5-turbo';
+    modelName = modelName || 'gpt-4o-mini';
 
     const chat = new ChatOpenAI(
       { temperature: 0, maxTokens, modelName },

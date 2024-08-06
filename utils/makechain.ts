@@ -6,7 +6,7 @@ import { CallbackManager } from 'langchain/callbacks';
 
 const AI_NAME = 'AI Guy';
 const NUMBER_OF_REFERENCES = 4;
-const ALLOWED_MODELS = ['gpt-3.5-turbo', 'gpt-4'];
+const ALLOWED_MODELS = ['gpt-4o-mini', 'gpt-4o'];
 const ORGANIZATION_ID = process.env.ORGANIZATION_ID || '';
 
 // TODO: provide a wrapper to call chains that tracks token usage and handles maxToken errors
@@ -197,8 +197,8 @@ export const evalQuestionChain = () => {
     llm: new OpenAIChat(
       {
         temperature: 0,
-        modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
-        // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        modelName: 'gpt-4o-mini', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
+        // modelName: 'gpt-4o', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
       },
       { organization: ORGANIZATION_ID },
     ),
@@ -211,8 +211,8 @@ const summaryChain = () => {
     llm: new OpenAIChat(
       {
         temperature: 1,
-        modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
-        // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        modelName: 'gpt-4o-mini', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
+        // modelName: 'gpt-4o', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
       },
       { organization: ORGANIZATION_ID },
     ),
@@ -269,15 +269,15 @@ export const makeChain = (
     llm: new OpenAIChat(
       {
         temperature: 1,
-        modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
-        // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        modelName: 'gpt-4o-mini', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
+        // modelName: 'gpt-4o', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
       },
       { organization: ORGANIZATION_ID },
     ),
     prompt: CONDENSE_PROMPT_GPT3,
   });
 
-  let model = 'gpt-3.5-turbo';
+  let model = 'gpt-4o-mini';
 
   if (!ALLOWED_MODELS.includes(version)) {
     console.log('Invalid model version:', version);
@@ -292,8 +292,8 @@ export const makeChain = (
       {
         temperature: 1,
         modelName: model,
-        // modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
-        // modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+        // modelName: 'gpt-4o-mini', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
+        // modelName: 'gpt-4o', //change this to older versions (e.g. gpt-4o-mini) if you don't have access to gpt-4
         streaming: Boolean(onTokenStream),
         callbackManager: onTokenStream
           ? CallbackManager.fromHandlers({

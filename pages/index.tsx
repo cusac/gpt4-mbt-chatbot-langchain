@@ -27,7 +27,7 @@ export default function Home() {
   const [queue, setQueue] = useState<{ [key: number]: any }>({});
   const [lastProcessedId, setLastProcessedId] = useState(0);
   const [doneMessages, setDoneMessages] = useState<boolean>(false);
-  const [selectedAI, setSelectedAI] = useState<string>('gpt-3.5-turbo');
+  const [selectedAI, setSelectedAI] = useState<string>('gpt-4o-mini');
   const [messageState, setMessageState] = useState<{
     messages: Message[];
     pending?: string;
@@ -49,8 +49,8 @@ export default function Home() {
   });
 
 const MODEL_OPTIONS = {
-  'AI GUY': 'gpt-4',
-  'AI GUY Jr.': 'gpt-3.5-turbo'
+  'AI GUY': 'gpt-4o',
+  'AI GUY Jr.': 'gpt-4o-mini'
 }
 
   const { messages, pending, history, chatSummary, pendingSourceDocs } =
